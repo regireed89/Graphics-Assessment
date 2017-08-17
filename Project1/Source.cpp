@@ -8,6 +8,9 @@
 #include <glm\mat4x4.hpp>
 #include <stdio.h>
 #include <iostream>
+#include <gtc/matrix_transform.inl>
+#include <glm/gtc/matrix_transform.inl>
+#include <glm/gtc/constants.inl>
 
 
 int main()
@@ -40,8 +43,13 @@ int main()
 	printf("GL: %i.%i\n", major, minor);
 	glClearColor(0.5f, 0.5f, 1.0f, 1.0f);
 	glm::vec4 clearcolor = glm::vec4(0.5f, 0.5f, 1.0f, 1.0f);
+	Gizmos::create();
+
+	glm::mat4 view = lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
+	glm::mat4 projection = glm::perspective(glm::pi<float>() * 0.25f, 16 / 9.f, 0.1f, 1000.f);
 	while(true)
 	{
+		Gizmos::destroy();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		if (glfwWindowShouldClose(window))
 			break;
@@ -53,6 +61,9 @@ int main()
 			clearcolor.g -= .001f;
 			clearcolor.b -= .001f;
 		}
+
+		Gizmos::clear();
+		Gizmos::addTransform(glm::mat4(1));
 		glClearColor(clearcolor.r, clearcolor.g, clearcolor.b, clearcolor.a);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
