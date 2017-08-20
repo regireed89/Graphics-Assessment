@@ -17,8 +17,8 @@ Application::~Application()
 void Application::run(const char* title, unsigned int width, unsigned int height, bool fullscreen)
 {
 	startup();
-	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-	GLFWwindow* window = glfwCreateWindow(width, height, title, monitor, nullptr);//creates window for opengl
+	//GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);//creates window for opengl
 
 	if(window == nullptr)//checks if ther is a window or not
 	{
@@ -32,4 +32,17 @@ void Application::run(const char* title, unsigned int width, unsigned int height
 		glfwTerminate();//GLFW library is terminated
 	}
 
+	while (true)
+	{
+		if (glfwWindowShouldClose(window))
+			break;
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
+			glfwWindowShouldClose(window);
+		
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }

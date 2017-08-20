@@ -5,7 +5,7 @@
 int main()
 {
 	Application* app = new IntroApplication();
-	app->run("Regi", 1000, 800, false);
+	app->run("Regi", 1000, 600 , false);
 
 	return 0;
 }

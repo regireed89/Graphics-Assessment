@@ -1,4 +1,5 @@
 #include "IntroApplication.h"
+#include "Application.h"
 #include <GLFW/glfw3.h>
 
 
@@ -34,6 +35,4 @@ void IntroApplication::draw()
 {
 }
 
-void IntroApplication::run(const char*, unsigned width, unsigned height, bool fullscreen)
-{
-}
+
