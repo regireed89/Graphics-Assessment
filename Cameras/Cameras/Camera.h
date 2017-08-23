@@ -8,14 +8,13 @@ class Camera
 {
 public:
 	Camera();
-	~Camera();
+	virtual ~Camera();
 
-	virtual void update(float deltaTime) = 0; 
-	setPerspective(float fieldOfView, float aspectRatio, float near, float far);
-	update(float deltaTime);
-	setLookAt(vec3 from, vec3 to, vec3 up);
+	virtual void update(float deltaTime);
+	void setPerspective(float fieldOfView, float aspectRatio, float near, float far);
+	glm::mat4 setLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up);
 	
-	glm::mat4 (vec3 position);
+	glm::mat4 setPosition(glm::vec3 position);
 	glm::mat4 getView();
 	glm::mat4 getProjection();
 	glm::mat4 getProjectionView();
