@@ -1,9 +1,12 @@
 #include <iostream>
-#include "Camera.h"
+#include "CameraApp.h"
+#include "Application.h"
 
 int main()
 {
-	Camera cam = Camera();
-	cam.setLookAt(glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
-	return 0;
+	Application* app = new CameraApp();
+	app->run("Hello", 800, 800, false);
+
+
+		return 0;
 }
