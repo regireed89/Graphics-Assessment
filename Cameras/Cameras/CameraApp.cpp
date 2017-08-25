@@ -27,18 +27,22 @@ void CameraApp::update(float deltaTime)
 	runtime += deltaTime;
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
+		glm::vec3 npos = glm::vec3(m_camera->getWorldTransform()[3] -= m_camera->getWorldTransform()[2]);		
 		m_camera->setPosition(npos);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
+		glm::vec3 nneg = glm::vec3(m_camera->getWorldTransform()[3] += m_camera->getWorldTransform()[2]);
 		m_camera->setPosition(nneg);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
+		glm::vec3 npos = glm::vec3(m_camera->getWorldTransform()[3] -= m_camera->getWorldTransform()[0]);
 		m_camera->setPosition(npos);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
+		glm::vec3 nneg = glm::vec3(m_camera->getWorldTransform()[3] += m_camera->getWorldTransform()[0]);
 		m_camera->setPosition(nneg);
 	}
 }
