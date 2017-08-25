@@ -17,6 +17,7 @@ void CameraApp::startup()
 {
  
 	m_camera = new Camera();
+	m_camera->setLookAt(vec3(10, 10, 10), vec3(0, 0, 0), vec3(0, 1, 0));
 	Gizmos::create();
 }
 

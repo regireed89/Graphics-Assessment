@@ -79,22 +79,22 @@ glm::mat4 Camera::setPosition(glm::vec3 position)
 
 glm::mat4 Camera::getView()
 {
-	return{};
+	return viewTransform;
 }
 
 glm::mat4 Camera::getProjection()
 {
-	return{};
+	return projectionTransform;
 }
 
 glm::mat4 Camera::getProjectionView()
 {
-	return{};
+	return projectionViewTransform;
 }
 
 glm::mat4 Camera::getWorldTransform()
 {
-	return{};
+	return worldTransform;
 }
 
 glm::mat4 Camera::updateProjectionViewTransform()
