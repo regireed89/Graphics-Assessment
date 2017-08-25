@@ -5,7 +5,7 @@
 int main()
 {
 	Application* app = new CameraApp();
-	app->run("Hello", 800, 800, false);
+	app->run("Hello", 1200, 800, false);
 
 
 		return 0;

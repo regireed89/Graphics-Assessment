@@ -16,7 +16,7 @@ public:
 	static void		draw(const glm::mat4& a_projectionView);
 	static void		draw(const glm::mat4& a_projection, const glm::mat4& a_view);
 	
-	// the projection matrix here should ideally be orthographic with a near of -1 and far of 1
+	// the projection matrix here should ideally be orthographic with a Near of -1 and Far of 1
 	static void		draw2D(const glm::mat4& a_projection);
 
 	// Adds a single debug line

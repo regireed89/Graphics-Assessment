@@ -25,7 +25,6 @@
     <ClInclude Include="FlyCamera.h" />
     <ClInclude Include="Gizmos.h" />
     <ClInclude Include="gl_core_4_4.h" />
-    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
@@ -35,7 +34,6 @@
     <ClCompile Include="Gizmos.cpp" />
     <ClCompile Include="gl_core_4_4.c" />
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E826BFED-7792-4D0A-A7DB-0A385D986C05}</ProjectGuid>

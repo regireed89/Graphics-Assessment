@@ -1,7 +1,7 @@
 #include "Application.h"
 #include "gl_core_4_4.h"
 #include <GLFW/glfw3.h>
-#include <gtc/matrix_transform.inl>
+
 
 
 Application::Application()
@@ -16,7 +16,7 @@ Application::~Application()
 void Application::run(const char* title, unsigned width, unsigned height, bool fullscreen)
 {
 	glfwInit();
-	GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 	if(window == nullptr)
 	{
 		glfwTerminate();
