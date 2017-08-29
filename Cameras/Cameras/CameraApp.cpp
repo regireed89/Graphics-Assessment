@@ -50,7 +50,8 @@ void CameraApp::update(float deltaTime)
 
 	//controls rotation of camera using mouse
 	static bool sbMouseButtonDown = false;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) 
+	{
 
 		static double siPrevMouseX = 0;
 		static double siPrevMouseY = 0;
@@ -79,6 +80,11 @@ void CameraApp::update(float deltaTime)
 		//auto Elevation = rotate(static_cast<float>(iDeltaX) * 1 / 800, vec3(0, 1, 0));
 		//auto Azimuth = rotate(static_cast<float>(iDeltaY) * 1 / 800, vec3(1, 0, 0));
 		m_camera->m_view = x * y * m_camera->m_view;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_R))
+	{
+		m_camera->setLookAt(vec3(10, 10, 10), vec3(0, 0, 0), vec3(0, 1, 0));
 	}
 }
 
