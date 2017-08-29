@@ -17,15 +17,15 @@ void Application::run(const char* title, unsigned width, unsigned height, bool f
 {
 	glfwInit();
 	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-	if(window == nullptr)
+	if(window == nullptr)//checks if ther is a window or not
 	{
-		glfwTerminate();
+		glfwTerminate();//if there is no window the GLFW libray is stopped
 	}
-	glfwMakeContextCurrent(window);
-	if(ogl_LoadFunctions() == ogl_LOAD_FAILED)
+	glfwMakeContextCurrent(window);//makes context in window current
+	if(ogl_LoadFunctions() == ogl_LOAD_FAILED)//checks if opengl functions loaded
 	{
-		glfwDestroyWindow(window);
-		glfwTerminate();
+		glfwDestroyWindow(window);//if not the window is closed
+		glfwTerminate(); //GLFW library is terminated
 	}
 	startup();
 	while(true)
