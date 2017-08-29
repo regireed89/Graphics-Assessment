@@ -28,8 +28,8 @@ private:
 	glm::mat4 m_projection;
 	float m_fov;//how much of the world a camera can view
 	float m_aspectRatio;//dimensions of the screen
-	float m_near;
-	float m_far;
+	float m_near;//near clip plane
+	float m_far;//far clip plane
 	
 	
 };
