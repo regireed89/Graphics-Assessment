@@ -2,6 +2,7 @@
 #include "Gizmos.h"
 #include "glm.hpp"
 #include <GLFW/glfw3.h>
+#include <iostream>
 using namespace glm;
 
 CameraApp::CameraApp()
@@ -25,6 +26,7 @@ void CameraApp::startup()
 void CameraApp::update(float deltaTime)
 {
 	runtime += deltaTime;
+	//controls keybord movement of camera
 	if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		glm::vec3 npos = glm::vec3(m_camera->getWorldTransform()[3] -= m_camera->getWorldTransform()[2]);		
@@ -44,6 +46,45 @@ void CameraApp::update(float deltaTime)
 	{
 		glm::vec3 nneg = glm::vec3(m_camera->getWorldTransform()[3] += m_camera->getWorldTransform()[0]);
 		m_camera->setPosition(nneg);
+	}
+
+	//controls rotation of camera using mouse
+	static bool sbMouseButtonDown = false;
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) 
+	{
+
+		static double siPrevMouseX = 0;
+		static double siPrevMouseY = 0;
+
+		if (sbMouseButtonDown == false)
+		{
+			sbMouseButtonDown = true;
+			glfwGetCursorPos(window, &siPrevMouseX, &siPrevMouseY);
+		}
+
+		double mouseX = 0, mouseY = 0;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+
+		double iDeltaX = mouseX - siPrevMouseX;
+		double iDeltaY = mouseY - siPrevMouseY;
+		
+		siPrevMouseX = mouseX;
+		siPrevMouseY = mouseY;
+
+		//mat4 z = mat4(cos(iDeltaX*iDeltaY), -sin(iDeltaX*iDeltaY), 0, 0, sin(iDeltaX*iDeltaY), cos(iDeltaX*iDeltaY), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+		mat4 x = mat4(1, 0, 0, 0, 0, cos(iDeltaY/200), -sin(iDeltaY/200), 0, 0, sin(iDeltaY/200), cos(iDeltaY/200), 0, 0, 0, 0, 1);
+		mat4 y = mat4(cos(iDeltaX/50), 0, sin(iDeltaX/200), 0, 0, 1, 0, 0, -sin(iDeltaX/200), 0, cos(iDeltaX/200), 0, 0, 0, 0, 1);
+
+		
+		
+		//auto Elevation = rotate(static_cast<float>(iDeltaX) * 1 / 800, vec3(0, 1, 0));
+		//auto Azimuth = rotate(static_cast<float>(iDeltaY) * 1 / 800, vec3(1, 0, 0));
+		m_camera->m_view = x * y * m_camera->m_view;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_R))
+	{
+		m_camera->setLookAt(vec3(10, 10, 10), vec3(0, 0, 0), vec3(0, 1, 0));
 	}
 }
 
@@ -70,3 +111,5 @@ void CameraApp::draw()
 	}
 	Gizmos::draw(m_camera->getProjectionView());
 }
+
+

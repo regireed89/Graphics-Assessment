@@ -21,7 +21,7 @@ Camera::~Camera()
 void Camera::update(float deltaTime)
 {
 }
-
+//shows a two dimensional view for three dimensional ojects
 void Camera::setOrthographic(float left, float right, float bottom, float top, float Near, float Far)
 {
 	vec4 x = vec4(2 / (right - left), 0, 0, 0);
@@ -31,7 +31,7 @@ void Camera::setOrthographic(float left, float right, float bottom, float top, f
 	mat4 o = mat4(x, y, z, w);
 	assert(o == ortho(left, right, bottom, top, Near, Far));
 }
-
+//shows depth of objects
 void Camera::setPerspective(float fieldOfView, float aspectRatio, float Near, float Far)
 {
 	m_fov = fieldOfView;
@@ -46,7 +46,7 @@ void Camera::setPerspective(float fieldOfView, float aspectRatio, float Near, fl
 	auto copy = glm::perspective(m_fov, aspectRatio, Near, Far);
 	assert(m_projection == copy);
 }
-
+//tells the camera where to look
 glm::mat4 Camera::setLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up)
 {
 	vec3 f = eye - center;
@@ -76,7 +76,7 @@ glm::mat4 Camera::setLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up)
 
 	return M;
 }
-
+//position where the camera is located
 void Camera::setPosition(glm::vec3 position)
 {
 	worldTransform[3].x = position.x;
