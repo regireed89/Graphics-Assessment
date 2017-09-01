@@ -41,13 +41,13 @@
     <ClInclude Include="gl_core_4_4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderGeoApp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderGeoApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
