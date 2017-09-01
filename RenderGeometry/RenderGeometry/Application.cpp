@@ -15,6 +15,7 @@ Application::~Application()
 
 void Application::run(const char* title, unsigned width, unsigned height, bool fullscreen)
 {
+	startup();
 	glfwInit();
 	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
 	if(window == nullptr)
@@ -27,7 +28,7 @@ void Application::run(const char* title, unsigned width, unsigned height, bool f
 		glfwDestroyWindow(window);
 		glfwTerminate();
 	}
-	startup();
+	
 	while(true)
 	{
 		if(glfwWindowShouldClose(window))	
@@ -42,4 +43,5 @@ void Application::run(const char* title, unsigned width, unsigned height, bool f
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
+	
 }

@@ -95,6 +95,7 @@ void RenderGeoApp::startup()
 	int success = GL_FALSE;
 	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
 	glShaderSource(vertexShader, 1, (const char**)&vsSource, 0);
 	glCompileShader(vertexShader);
 	glShaderSource(fragmentShader, 1, (const char**)&fsSource, 0);
@@ -125,6 +126,7 @@ void RenderGeoApp::startup()
 	glUseProgram(m_programID);
 	unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "projectionViewWorldMatrix");
 	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(cam->getProjectionView()));
+
 	glBindVertexArray(m_VAO);
 	unsigned int indexCount = (rows - 1) * (cols - 1) * 6;
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -133,6 +135,8 @@ void RenderGeoApp::startup()
 
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
+
+	generateGrid();
 
 }
 
