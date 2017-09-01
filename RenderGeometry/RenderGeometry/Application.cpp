@@ -15,33 +15,44 @@ Application::~Application()
 
 void Application::run(const char* title, unsigned width, unsigned height, bool fullscreen)
 {
-	startup();
+
 	glfwInit();
 	window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-	if(window == nullptr)
+	if (window == nullptr)
 	{
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(window);
-	if(ogl_LoadFunctions() == ogl_LOAD_FAILED)
+	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
 	{
 		glfwDestroyWindow(window);
 		glfwTerminate();
 	}
-	
-	while(true)
+
+	double prevTime = glfwGetTime();
+	double currTime = 0;
+	double deltaTime = 0;
+	startup();
+
+	while (true)
 	{
-		if(glfwWindowShouldClose(window))	
+
+
+
+		if (glfwWindowShouldClose(window))
 			break;
-		
-		if(glfwGetKey(window, GLFW_KEY_ESCAPE))
+
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE))
 			glfwWindowShouldClose(window);
-		update(1);
+		currTime = glfwGetTime();
+		deltaTime = currTime - prevTime;
+		prevTime = currTime;
+		update(deltaTime);
 		draw();
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	
+
 }

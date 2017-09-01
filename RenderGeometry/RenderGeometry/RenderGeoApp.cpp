@@ -2,14 +2,17 @@
 #include "RenderGeoApp.h"
 #include "gl_core_4_4.h"
 #include <glm.hpp>
+#include <GLM/fwd.hpp>
 #include <GLM/ext.hpp>
+#include <vector>
+#include "Mesh.h"
 
 
 RenderGeoApp::RenderGeoApp()
 {
 	cam = new Camera();
+	mesh = new Mesh();
 }
-
 
 RenderGeoApp::~RenderGeoApp()
 {
@@ -17,65 +20,42 @@ RenderGeoApp::~RenderGeoApp()
 
 void RenderGeoApp::generateGrid()
 {
-	Vertex* aoVertices = new Vertex[rows * cols];
-	for (unsigned int r = 0; r < rows; ++r)
-	{
-		for (unsigned int c = 0; c < cols; ++c)
-		{
-			aoVertices[r * cols + c].position = vec4((float)c, 0, (float)r, 1);
-			vec3 color = vec3(sinf((c / (float)(cols - 1))*(r / (float)(rows - 1))));
-		}
-	}
-	unsigned int* auiIndices = new unsigned int[(rows - 1) * (cols - 1) * 6];
+	Vertex a = { glm::vec4(-5, 0, 0, 1)		, glm::vec4(.1, .1, .1, 1) };//bl	
+	Vertex b = { glm::vec4(5, 0, 0, 1)			, glm::vec4(.1, .1, .1, 1) };//br
+	Vertex c = { glm::vec4(5, -5, 0, 1)			, glm::vec4(.1, .1, .1, 1) };//tl
+	Vertex d = { glm::vec4(-5, -5, 0, 1)		, glm::vec4(1, 0, 0, 1) };//tr
+	Vertex e = { glm::vec4(-5, 5, 0, 1)		, glm::vec4(0, 0, 1, 1) };//tr	
 
-	unsigned int index = 0;
-	for (unsigned int r = 0; r < (rows - 1); ++r)
-	{
-		for (unsigned int c = 0; c < cols; ++r)
-		{
-			auiIndices[index++] = r * cols + c;
-			auiIndices[index++] = (r + 1)* cols + c;
-			auiIndices[index++] = (r + 1) * cols + (c + 1);
-
-			auiIndices[index++] = r * cols + c;
-			auiIndices[index++] = (r + 1)*cols + c;
-			auiIndices[index++] = r * cols + (c + 1);
-		}
-	}
-
+	std::vector<Vertex> vertices{ a,b,c,d,e };
+	std::vector<unsigned int> indices{ 0, 1, 2, 0, 2, 3 , 0, 4, 1};
+	indexCount = indices.size();
+	//create vertex descriptors
+	glGenVertexArrays(1, &m_VAO);
+	//bind vertex array object
+	glBindVertexArray(m_VAO);
+	//bind vertex buffer and ibo 
 	glGenBuffers(1, &m_VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, (rows*cols) * sizeof(Vertex), aoVertices, GL_STATIC_DRAW);
-
 	glGenBuffers(1, &m_IBO);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (rows - 1) * (cols - 1) * 6 * sizeof(unsigned int), auiIndices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//buffer vertex info
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
+	//buffer index info
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+	///vertex descriptors
 	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
+	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(vec4)));
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	glGenBuffers(1, &m_VBO);
-	glGenBuffers(1, &m_IBO);
-
-	glGenVertexArrays(1, &m_VAO);
-
-	glBindVertexArray(m_VAO);
-
 	glBindVertexArray(0);
-
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-
-
-	delete[]aoVertices;
-	delete[]auiIndices;
 }
 
 void RenderGeoApp::startup()
@@ -114,29 +94,30 @@ void RenderGeoApp::startup()
 		glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &infoLogLength);
 		char* infoLog = new char[infoLogLength];
 
-		glGetProgramInfoLog(m_programID, infoLogLength, 0, infoLog);
+		glGetProgramInfoLog(m_programID, infoLogLength, nullptr, infoLog);
 		printf("Error: Failed to link shader program!\n");
 		printf("%s\n", infoLog);
 		delete[] infoLog;
 	}
-	glShaderSource(vertexShader, 1, (const char**)&vsSource, 0);
+	glShaderSource(vertexShader, 1, static_cast<const char**>(&vsSource), nullptr);
 	glCompileShader(vertexShader);
-
-
-	glUseProgram(m_programID);
-	unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "projectionViewWorldMatrix");
-	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(cam->getProjectionView()));
-
-	glBindVertexArray(m_VAO);
-	unsigned int indexCount = (rows - 1) * (cols - 1) * 6;
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
-
 
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
 
-	generateGrid();
+	Vertex a = { glm::vec4(-5,  0, 0, 1), glm::vec4(.1, .1, .1, 1) };//bl	
+	Vertex b = { glm::vec4(5,  0, 0, 1), glm::vec4(.1, .1, .1, 1) };//br
+	Vertex c = { glm::vec4(5, -5, 0, 1), glm::vec4(.1, .1, .1, 1) };//tl
+	Vertex d = { glm::vec4(-5, -5, 0, 1), glm::vec4(1, 0, 0, 1) };//tr
+	Vertex e = { glm::vec4(-5,  5, 0, 1), glm::vec4(0, 0, 1, 1) };//tr	
+
+	std::vector<Vertex>verts = { a,b,c,d,e };
+	std::vector<unsigned int>indices = { 0, 1, 2, 0, 2, 3, 0, 4, 1 };
+
+	mesh->initialize(verts, indices);
+	mesh->Create_Buffers();
+	
+
 
 }
 
@@ -150,4 +131,15 @@ void RenderGeoApp::shutdown()
 
 void RenderGeoApp::draw()
 {
+	glUseProgram(m_programID);
+	
+	glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
+	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
+	mat4 mvp = projection * view * glm::mat4(1);
+	unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "projectionViewWorldMatrix");
+	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(mvp));
+	mesh->Bind();
+	glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_INT, nullptr);
+	mesh->Unbind();
+	glUseProgram(0);
 }
