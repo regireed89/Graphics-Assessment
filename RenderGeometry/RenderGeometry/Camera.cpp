@@ -29,10 +29,10 @@ void Camera::setOrthographic(float left, float right, float bottom, float top, f
 	vec4 z = vec4(0, 0, -2 / (Far - Near), 0);
 	vec4 w = vec4(-((left + right) / 2), -((top + bottom) / 2), -((Far + Near) / 2), 1);
 	mat4 o = mat4(x, y, z, w);
-	assert(o == ortho(left, right, bottom, top, Near, Far));
+	
 }
 
-void Camera::setPerspective(float fieldOfView, float aspectRatio, float Near, float Far)
+glm::mat4 Camera::setPerspective(float fieldOfView, float aspectRatio, float Near, float Far)
 {
 	m_fov = fieldOfView;
 	m_aspectRatio = aspectRatio;
@@ -44,7 +44,7 @@ void Camera::setPerspective(float fieldOfView, float aspectRatio, float Near, fl
 	auto w = -1.f * ((2.f * m_far * m_near) / (m_far - m_near));
 	m_projection = glm::mat4(vec4(x, 0, 0, 0), vec4(0, y, 0, 0), vec4(0, 0, z, -1.f), vec4(0, 0, w, 0));
 	auto copy = glm::perspective(m_fov, aspectRatio, Near, Far);
-	assert(m_projection == copy);
+	return copy;
 }
 
 glm::mat4 Camera::setLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up)

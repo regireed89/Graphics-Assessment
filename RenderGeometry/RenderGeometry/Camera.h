@@ -10,7 +10,7 @@ public:
 	
 	virtual void update(float deltaTime);
 	void setOrthographic(float left, float right, float bottom, float top, float Near, float Far);
-	void setPerspective(float fieldOfView, float aspectRatio, float Near, float Far);
+	glm::mat4 setPerspective(float fieldOfView, float aspectRatio, float Near, float Far);
 	glm::mat4 setLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up);
 	
 	void setPosition(glm::vec3 position);
