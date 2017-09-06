@@ -2,6 +2,7 @@
 #include "Application.h"
 #include <glm.hpp>
 #include "Camera.h"
+class Shader;
 class Mesh;
 using namespace glm;
 
@@ -20,6 +21,7 @@ public:
 
 	Camera* cam;
 	Mesh* mesh;
+	Shader* shader;
 
 protected:
 	virtual void startup()override;

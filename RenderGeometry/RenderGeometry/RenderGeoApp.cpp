@@ -2,16 +2,18 @@
 #include "RenderGeoApp.h"
 #include "gl_core_4_4.h"
 #include <glm.hpp>
-#include <GLM/fwd.hpp>
 #include <GLM/ext.hpp>
 #include <vector>
 #include "Mesh.h"
 #include <GLFW\glfw3.h>
+#include "Shader.h"
+
 
 RenderGeoApp::RenderGeoApp()
 {
 	cam = new Camera();
 	mesh = new Mesh();
+	shader = new Shader();
 }
 
 RenderGeoApp::~RenderGeoApp()
@@ -20,7 +22,7 @@ RenderGeoApp::~RenderGeoApp()
 
 void RenderGeoApp::startup()
 {
-	const char* vsSource = "#version 410\n \
+	{/*const char* vsSource = "#version 410\n \
 						layout(location = 0) in vec4 position; \
 						layout(location=1) in vec4 color; \
 						out vec4 vColor; \
@@ -65,52 +67,57 @@ void RenderGeoApp::startup()
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
 
-	glClearColor(1.f, 1.f, 1.f, 1.f);
+	glClearColor(1.f, 1.f, 1.f, 1.f);*/}
 
-	Vertex x0 = { glm::vec4(0, 4, 0, 1), glm::vec4(.1, .1, .1, 1) };
+	shader->bind();
+	shader->attach();
+	shader->unbind();
 
-	Vertex x1 = { glm::vec4(2,  3, -2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x2 = { glm::vec4(2,  3, 2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x3 = { glm::vec4(-2, 3, 2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x4 = { glm::vec4(-2, 3, -2, 1), glm::vec4(.1, .1, .1, 1) };
 
-	Vertex x5 = { glm::vec4(0,  2, -4, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x6 = { glm::vec4(3,  2, -3, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x7 = { glm::vec4(4,  2, 0, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x8 = { glm::vec4(3,  2, 3, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x9 = { glm::vec4(0,  2, 4, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x10 = { glm::vec4(-3, 2, 3, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x11 = { glm::vec4(-4, 2, 0, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x12 = { glm::vec4(-3, 2, -3, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex x0 = { glm::vec4(0, 4, 0, 1), glm::vec4(1, .1, .1, 0) };
 
-	Vertex x13 = { glm::vec4(2,  0, -6, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x14 = { glm::vec4(4,  0, -4, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x15 = { glm::vec4(6,  0, -2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x16 = { glm::vec4(6,  0, 2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x17 = { glm::vec4(4,  0, 4, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x18 = { glm::vec4(2,  0, 6, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x19 = { glm::vec4(-2,  0, 6, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x20 = { glm::vec4(-4,  0, 4, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x21 = { glm::vec4(-6,  0, 2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x22 = { glm::vec4(-6,  0, -2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x23 = { glm::vec4(-4,  0, -4, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x24 = { glm::vec4(-2,  0, -6, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex x1 = { glm::vec4(2,  3, -2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x2 = { glm::vec4(2,  3, 2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x3 = { glm::vec4(-2, 3, 2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x4 = { glm::vec4(-2, 3, -2, 1), glm::vec4(1, .1, .1, 0) };
 
-	Vertex x25 = { glm::vec4(0,  -2, -4, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x26 = { glm::vec4(3,  -2, -3, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x27 = { glm::vec4(4,  -2, 0, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x28 = { glm::vec4(3,  -2, 3, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x29 = { glm::vec4(0,  -2, 4, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x30 = { glm::vec4(-3, -2, 3, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x31 = { glm::vec4(-4, -2, 0, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x32 = { glm::vec4(-3, -2, -3, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex x5 = { glm::vec4(0,  2, -4, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x6 = { glm::vec4(3,  2, -3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x7 = { glm::vec4(4,  2, 0, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x8 = { glm::vec4(3,  2, 3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x9 = { glm::vec4(0,  2, 4, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x10 = { glm::vec4(-3, 2, 3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x11 = { glm::vec4(-4, 2, 0, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x12 = { glm::vec4(-3, 2, -3, 1), glm::vec4(1, .1, .1, 0) };
 
-	Vertex x33 = { glm::vec4(2,  -3, -2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x34 = { glm::vec4(2,  -3, 2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x35 = { glm::vec4(-2, -3, 2, 1), glm::vec4(.1, .1, .1, 1) };
-	Vertex x36 = { glm::vec4(-2, -3, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex x13 = { glm::vec4(2,  0, -4.5, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x14 = { glm::vec4(3,  0, -3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x15 = { glm::vec4(4.5,  0, -2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x16 = { glm::vec4(4.5,  0, 2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x17 = { glm::vec4(3,  0, 3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x18 = { glm::vec4(2,  0, 4.5, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x19 = { glm::vec4(-2,  0, 4.5, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x20 = { glm::vec4(-3,  0, 3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x21 = { glm::vec4(-4.5,  0, 2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x22 = { glm::vec4(-4.5,  0, -2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x23 = { glm::vec4(-3,  0, -3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x24 = { glm::vec4(-2,  0, -4.5, 1), glm::vec4(1, .1, .1, 0) };
 
-	Vertex x37 = { glm::vec4(0, -4, 0, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex x25 = { glm::vec4(0,  -2, -4, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x26 = { glm::vec4(3,  -2, -3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x27 = { glm::vec4(4,  -2, 0, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x28 = { glm::vec4(3,  -2, 3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x29 = { glm::vec4(0,  -2, 4, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x30 = { glm::vec4(-3, -2, 3, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x31 = { glm::vec4(-4, -2, 0, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x32 = { glm::vec4(-3, -2, -3, 1), glm::vec4(1, .1, .1, 0) };
+
+	Vertex x33 = { glm::vec4(2,  -3, -2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x34 = { glm::vec4(2,  -3, 2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x35 = { glm::vec4(-2, -3, 2, 1), glm::vec4(1, .1, .1, 0) };
+	Vertex x36 = { glm::vec4(-2, -3, -2, 1), glm::vec4(1, .1, .1, 0) };
+
+	Vertex x37 = { glm::vec4(0, -4, 0, 1), glm::vec4(1, .1, .1, 0) };
 
 
 	std::vector<Vertex>verts = { 
@@ -122,7 +129,9 @@ void RenderGeoApp::startup()
 					x33,x34,x35,x36,
 							x37 
 	};
-	std::vector<unsigned int>indices = { 0,1,2, 
+	std::vector<unsigned int>indices = 
+	{ 
+		0,1,2, 
 		0,2,3,
 		0,3,4,
 		0,4,1,
@@ -179,9 +188,11 @@ void RenderGeoApp::startup()
 		34,29,28,
 		34,28,27,
 	
+		37,33,34,
 		37,34,35,
 		37,35,36,
-		37,36,33, };
+		37,36,33, 
+	};
 
 	mesh->initialize(verts, indices);
 	mesh->Create_Buffers();
@@ -238,11 +249,11 @@ void RenderGeoApp::draw()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glLineWidth(2.0f);
 	glUseProgram(m_programID);
-	glm::mat4 view = glm::lookAt(glm::vec3(0, 0, 10), glm::vec3(0), glm::vec3(0, 1, 0));
+	glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 	mat4 mvp = projection * view * glm::mat4(1);
-	unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "projectionViewWorldMatrix");
-	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(mvp));
+	//unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "projectionViewWorldMatrix");
+	glUniformMatrix4fv(shader->getUniform("projectionViewWorldMatrix"), 1, false, glm::value_ptr(mvp));
 	mesh->Bind();
 	glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_INT, nullptr);
 	mesh->Unbind();
