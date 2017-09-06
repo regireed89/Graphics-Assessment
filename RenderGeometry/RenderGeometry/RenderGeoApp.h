@@ -11,7 +11,6 @@ class RenderGeoApp :
 public:
 	RenderGeoApp();
 	~RenderGeoApp();
-	void generateGrid();
 	
 	unsigned int indexCount;
 	unsigned int m_VAO;
@@ -24,7 +23,7 @@ public:
 
 protected:
 	virtual void startup()override;
-	virtual void update(float)override;
+	virtual void update(float delta)override;
 	virtual void shutdown()override;
 	virtual void draw()override;
 };

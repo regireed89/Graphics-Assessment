@@ -18,46 +18,6 @@ RenderGeoApp::~RenderGeoApp()
 {
 }
 
-void RenderGeoApp::generateGrid()
-{
-	Vertex a = { glm::vec4(-5, 0, 0, 1)		, glm::vec4(.1, .1, .1, 1) };//bl	
-	Vertex b = { glm::vec4(5, 0, 0, 1)			, glm::vec4(.1, .1, .1, 1) };//br
-	Vertex c = { glm::vec4(5, -5, 0, 1)			, glm::vec4(.1, .1, .1, 1) };//tl
-	Vertex d = { glm::vec4(-5, -5, 0, 1)		, glm::vec4(1, 0, 0, 1) };//tr
-	Vertex e = { glm::vec4(-5, 5, 0, 1)		, glm::vec4(0, 0, 1, 1) };//tr	
-
-	std::vector<Vertex> vertices{ a,b,c,d,e };
-	std::vector<unsigned int> indices{ 0, 1, 2, 0, 2, 3 , 0, 4, 1};
-	indexCount = indices.size();
-	//create vertex descriptors
-	glGenVertexArrays(1, &m_VAO);
-	//bind vertex array object
-	glBindVertexArray(m_VAO);
-	//bind vertex buffer and ibo 
-	glGenBuffers(1, &m_VBO);
-	glGenBuffers(1, &m_IBO);
-
-	//buffer vertex info
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-
-	//buffer index info
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-
-	///vertex descriptors
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(vec4)));
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-}
-
 void RenderGeoApp::startup()
 {
 	const char* vsSource = "#version 410\n \
@@ -105,24 +65,38 @@ void RenderGeoApp::startup()
 	glDeleteShader(fragmentShader);
 	glDeleteShader(vertexShader);
 
-	Vertex a = { glm::vec4(-5,  0, 0, 1), glm::vec4(.1, .1, .1, 1) };//bl	
-	Vertex b = { glm::vec4(5,  0, 0, 1), glm::vec4(.1, .1, .1, 1) };//br
-	Vertex c = { glm::vec4(5, -5, 0, 1), glm::vec4(.1, .1, .1, 1) };//tl
-	Vertex d = { glm::vec4(-5, -5, 0, 1), glm::vec4(1, 0, 0, 1) };//tr
-	Vertex e = { glm::vec4(-5,  5, 0, 1), glm::vec4(0, 0, 1, 1) };//tr	
+	glClearColor(1.f, 1.f, 1.f, 1.f);
 
-	std::vector<Vertex>verts = { a,b,c,d,e };
-	std::vector<unsigned int>indices = { 0, 1, 2, 0, 2, 3, 0, 4, 1 };
+	Vertex a0 = { glm::vec4(0,  -6, 0, 1), glm::vec4(.1, .1, .1, 1) };
+
+	Vertex b1 = { glm::vec4(2,  4, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex c2 = { glm::vec4(2,  4, 2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex d3 = { glm::vec4(-2, 4, 2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex e4 = { glm::vec4(-2, 4, -2, 1), glm::vec4(.1, .1, .1, 1) };
+
+	Vertex f5 = { glm::vec4(2,  2, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex g6 = { glm::vec4(2,  2, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex h7 = { glm::vec4(2,  2, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex i8 = { glm::vec4(2,  2, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex j9 = { glm::vec4(2,  2, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex k10 = { glm::vec4(2, 2, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex l11 = { glm::vec4(2, 2, -2, 1), glm::vec4(.1, .1, .1, 1) };
+	Vertex m12 = { glm::vec4(2, 2, -2, 1), glm::vec4(.1, .1, .1, 1) };
+
+
+	std::vector<Vertex>verts = { a0,b1,c2,d3,e4 };
+	std::vector<unsigned int>indices = { 0,1,2, 0,2,3, 0,3,4, 0,4,1 };
 
 	mesh->initialize(verts, indices);
 	mesh->Create_Buffers();
-	
 
-
+	verts.clear();
+	indices.clear();
 }
 
-void RenderGeoApp::update(float)
+void RenderGeoApp::update(float delta)
 {
+	cam->update(delta);
 }
 
 void RenderGeoApp::shutdown()
@@ -131,8 +105,13 @@ void RenderGeoApp::shutdown()
 
 void RenderGeoApp::draw()
 {
+
+	glClearColor(1.f, 1.f, 1.f, 0.f);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(2.0f);
 	glUseProgram(m_programID);
-	
 	glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 	mat4 mvp = projection * view * glm::mat4(1);

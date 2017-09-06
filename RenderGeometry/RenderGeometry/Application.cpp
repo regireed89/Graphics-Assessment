@@ -1,6 +1,6 @@
 #include "Application.h"
 #include "gl_core_4_4.h"
-#include <GLFW/glfw3.h>
+#include <GLFW\glfw3.h>
 
 
 
@@ -23,6 +23,7 @@ void Application::run(const char* title, unsigned width, unsigned height, bool f
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(window);
+	
 	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
 	{
 		glfwDestroyWindow(window);
@@ -36,9 +37,6 @@ void Application::run(const char* title, unsigned width, unsigned height, bool f
 
 	while (true)
 	{
-
-
-
 		if (glfwWindowShouldClose(window))
 			break;
 

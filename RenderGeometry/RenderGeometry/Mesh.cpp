@@ -5,9 +5,6 @@
 #include <GLM/ext.hpp>
 #include <vector>
 #include "RenderGeoApp.h"
-#include "gl_core_4_4.h"
-#include "gl_core_4_4.h"
-#include "gl_core_4_4.h"
 
 Mesh::Mesh()
 {
