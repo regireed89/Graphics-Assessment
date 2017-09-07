@@ -7,7 +7,8 @@
 #include "Mesh.h"
 #include <GLFW\glfw3.h>
 #include "Shader.h"
-
+using namespace glm;
+#define PI 3.1415926535897932384626433832795
 
 RenderGeoApp::RenderGeoApp()
 {
@@ -20,60 +21,28 @@ RenderGeoApp::~RenderGeoApp()
 {
 }
 
-void RenderGeoApp::startup()
+std::vector<vec4> RenderGeoApp::generateHalfCircle(float radius, unsigned np)
 {
-	{/*const char* vsSource = "#version 410\n \
-						layout(location = 0) in vec4 position; \
-						layout(location=1) in vec4 color; \
-						out vec4 vColor; \
-						uniform mat4 projectionViewWorldMatrix; \
-						void main() { vColor = color; gl_Position = projectionViewWorldMatrix * position; }";
-
-	const char* fsSource = "#version 410\n \
-						in vec4 vColor; \
-						out vec4 fragColor; \
-						void main() { fragColor = vColor; }";
-
-	int success = GL_FALSE;
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	glShaderSource(vertexShader, 1, (const char**)&vsSource, 0);
-	glCompileShader(vertexShader);
-	glShaderSource(fragmentShader, 1, (const char**)&fsSource, 0);
-	glCompileShader(fragmentShader);
-
-
-	m_programID = glCreateProgram();
-	glAttachShader(m_programID, vertexShader);
-	glAttachShader(m_programID, fragmentShader);
-	glLinkProgram(m_programID);
-
-	glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
-	if (success == GL_FALSE)
+	auto pts = std::vector<vec4>();
+	for (int i = 0; i < np; i++)
 	{
-		int infoLogLength = 0;
-		glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &infoLogLength);
-		char* infoLog = new char[infoLogLength];
 
-		glGetProgramInfoLog(m_programID, infoLogLength, nullptr, infoLog);
-		printf("Error: Failed to link shader program!\n");
-		printf("%s\n", infoLog);
-		delete[] infoLog;
+		float slice = PI / np;
+		float theta = slice * i;
+
+		float x = cos(theta) * radius;
+		float y = sin(theta) * radius;
+		float z = 0;
+		auto md = Vertex();
+		md.position = vec4(x, y, z, 1);
+		md.color = vec4(1, 0, 0, 0);
+		pts.push_back(md.position);
 	}
-	glShaderSource(vertexShader, 1, static_cast<const char**>(&vsSource), nullptr);
-	glCompileShader(vertexShader);
+		return 	pts;
+}
 
-	glDeleteShader(fragmentShader);
-	glDeleteShader(vertexShader);
-
-	glClearColor(1.f, 1.f, 1.f, 1.f);*/}
-
-	shader->bind();
-	shader->attach();
-	shader->unbind();
-
-
+void RenderGeoApp::proceduralSphere()
+{
 	Vertex x0 = { glm::vec4(0, 4, 0, 1), glm::vec4(1, .1, .1, 0) };
 
 	Vertex x1 = { glm::vec4(2,  3, -2, 1), glm::vec4(1, .1, .1, 0) };
@@ -201,10 +170,77 @@ void RenderGeoApp::startup()
 	indices.clear();
 }
 
+void RenderGeoApp::startup()
+{
+	shader->load("vsSource.vert", GL_VERTEX_SHADER);
+	shader->load("fsSource.frag", GL_FRAGMENT_SHADER);
+
+	/*const char* vsSource = "#version 410\n \
+						layout(location = 0) in vec4 position; \
+						layout(location=1) in vec4 color; \
+						out vec4 vColor; \
+						uniform mat4 projectionViewWorldMatrix; \
+						void main() { vColor = color; gl_Position = projectionViewWorldMatrix * position; }";
+
+	const char* fsSource = "#version 410\n \
+						in vec4 vColor; \
+						out vec4 fragColor; \
+						void main() { fragColor = vColor; }";
+
+	int success = GL_FALSE;
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+	glShaderSource(vertexShader, 1, (const char**)&vsSource, 0);
+	glCompileShader(vertexShader);
+	glShaderSource(fragmentShader, 1, (const char**)&fsSource, 0);
+	glCompileShader(fragmentShader);
+
+
+	m_programID = glCreateProgram();
+	glAttachShader(m_programID, vertexShader);
+	glAttachShader(m_programID, fragmentShader);
+	glLinkProgram(m_programID);
+
+	glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		int infoLogLength = 0;
+		glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		char* infoLog = new char[infoLogLength];
+
+		glGetProgramInfoLog(m_programID, infoLogLength, nullptr, infoLog);
+		printf("Error: Failed to link shader program!\n");
+		printf("%s\n", infoLog);
+		delete[] infoLog;
+	}
+	glShaderSource(vertexShader, 1, static_cast<const char**>(&vsSource), nullptr);
+	glCompileShader(vertexShader);
+
+	glDeleteShader(fragmentShader);
+	glDeleteShader(vertexShader);*/
+
+	glClearColor(1.f, 1.f, 1.f, 1.f);
+
+	//shader->bind();
+	shader->attach();
+	shader->unbind();
+
+	proceduralSphere();
+	
+	
+	std::vector<vec4> halfcircle = generateHalfCircle(1, 4);
+	std::vector<Vertex> verts;
+	for (auto p : halfcircle)
+		verts.push_back(Vertex{ p });
+
+	mesh->initialize(verts, std::vector<unsigned int>());
+	mesh->Create_Buffers();
+}
+
 void RenderGeoApp::update(float delta)
 {
 	//controls rotation of camera using mouse
-
 	static bool sbMouseButtonDown = false;
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
@@ -226,10 +262,9 @@ void RenderGeoApp::update(float delta)
 
 		siPrevMouseX = mouseX;
 		siPrevMouseY = mouseY;		
-
+		
 		mat4 x = mat4(1, 0, 0, 0, 0, cos(iDeltaY / 200), -sin(iDeltaY / 200), 0, 0, sin(iDeltaY / 200), cos(iDeltaY / 200), 0, 0, 0, 0, 1);
 		mat4 y = mat4(cos(iDeltaX / 50), 0, sin(iDeltaX / 200), 0, 0, 1, 0, 0, -sin(iDeltaX / 200), 0, cos(iDeltaX / 200), 0, 0, 0, 0, 1);
-
 
 		cam->m_view = x * y * cam->m_view;
 
@@ -242,7 +277,6 @@ void RenderGeoApp::shutdown()
 
 void RenderGeoApp::draw()
 {
-
 	glClearColor(1.f, 1.f, 1.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -252,8 +286,8 @@ void RenderGeoApp::draw()
 	glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 	mat4 mvp = projection * view * glm::mat4(1);
-	//unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "projectionViewWorldMatrix");
-	glUniformMatrix4fv(shader->getUniform("projectionViewWorldMatrix"), 1, false, glm::value_ptr(mvp));
+	unsigned int projectionViewUniform = glGetUniformLocation(m_programID, "projectionViewWorldMatrix");
+	glUniformMatrix4fv(projectionViewUniform, 1, false, glm::value_ptr(mvp));
 	mesh->Bind();
 	glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_INT, nullptr);
 	mesh->Unbind();

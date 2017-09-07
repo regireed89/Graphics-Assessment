@@ -13,29 +13,40 @@ Shader::~Shader()
 
 void Shader::bind()
 {
-	
-
-	glShaderSource(m_vertexShader, 1, (const char**)&vsSource, 0);
-	glCompileShader(m_vertexShader);
-	glShaderSource(m_fragmentShader, 1, (const char**)&vsSource, 0);
-	glCompileShader(m_fragmentShader);
-
-	
+		
 }
 
 void Shader::unbind()
 {
-	glShaderSource(m_vertexShader, 1, static_cast<const char**>(&vsSource), nullptr);
-	glCompileShader(m_vertexShader);
-
-	glDeleteShader(m_fragmentShader);
-	glDeleteShader(m_vertexShader);
-
 	glClearColor(1.f, 1.f, 1.f, 1.f);
 }
 
 void Shader::load(const char* filename, unsigned type)
 {
+	FILE* file;
+	fopen_s(&file, filename, "r");
+	if (file == nullptr)
+		perror("no file found");
+	fseek(file, 0, SEEK_END);
+	auto size = ftell(file);
+	auto buffer = new char[size + 1];
+	fseek(file, 0, SEEK_SET);
+	auto num = fread(buffer, sizeof(char), size + 1, file);
+	buffer[num] = '\0';
+	const char * data = buffer;
+
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	switch(type)
+	{
+	case GL_VERTEX_SHADER:
+		glShaderSource(m_vertexShader, 1, (const char**)&vsSource, 0);
+		glCompileShader(m_vertexShader);
+
+	case GL_FRAGMENT_SHADER:
+		glShaderSource(m_fragmentShader, 1, (const char**)&fsSource, 0);
+		glCompileShader(m_fragmentShader);		
+	}
 }
 
 void Shader::attach()
@@ -47,6 +58,7 @@ void Shader::attach()
 	glLinkProgram(m_program);
 
 	glGetProgramiv(m_program, GL_LINK_STATUS, &success);
+
 	if (success == GL_FALSE)
 	{
 		int infoLogLength = 0;
