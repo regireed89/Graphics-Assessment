@@ -33,17 +33,20 @@ void Shader::load(const char* filename, unsigned type)
 	fseek(file, 0, SEEK_SET);
 	auto num = fread(buffer, sizeof(char), size + 1, file);
 	buffer[num] = '\0';
+	
 	const char * data = buffer;
 
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	switch(type)
 	{
 	case GL_VERTEX_SHADER:
+		m_vertexShader = glCreateShader(type);
+		vsSource = buffer;
 		glShaderSource(m_vertexShader, 1, (const char**)&vsSource, 0);
 		glCompileShader(m_vertexShader);
 
 	case GL_FRAGMENT_SHADER:
+		m_fragmentShader = glCreateShader(type);
+		fsSource = buffer;
 		glShaderSource(m_fragmentShader, 1, (const char**)&fsSource, 0);
 		glCompileShader(m_fragmentShader);		
 	}

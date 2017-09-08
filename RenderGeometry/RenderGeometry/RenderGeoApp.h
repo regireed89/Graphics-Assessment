@@ -23,7 +23,7 @@ public:
 
 	Camera* cam;
 	Mesh* mesh;
-	Shader* shader;
+	Shader* _shader;
 	vec4 RenderSphere();
 	std::vector<vec4>generateHalfCircle(float radius, unsigned int np);
 	vec4 rotatePoints(std::vector<vec4> points, unsigned int nm);

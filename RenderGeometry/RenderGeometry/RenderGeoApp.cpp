@@ -14,7 +14,7 @@ RenderGeoApp::RenderGeoApp()
 {
 	cam = new Camera();
 	mesh = new Mesh();
-	shader = new Shader();
+	
 }
 
 RenderGeoApp::~RenderGeoApp()
@@ -172,8 +172,9 @@ void RenderGeoApp::proceduralSphere()
 
 void RenderGeoApp::startup()
 {
-	shader->load("vsSource.vert", GL_VERTEX_SHADER);
-	shader->load("fsSource.frag", GL_FRAGMENT_SHADER);
+	_shader = new Shader();
+	_shader->load("vsSource.vert", GL_VERTEX_SHADER);
+	_shader->load("fsSource.frag", GL_FRAGMENT_SHADER);
 
 	/*const char* vsSource = "#version 410\n \
 						layout(location = 0) in vec4 position; \
@@ -210,7 +211,7 @@ void RenderGeoApp::startup()
 		char* infoLog = new char[infoLogLength];
 
 		glGetProgramInfoLog(m_programID, infoLogLength, nullptr, infoLog);
-		printf("Error: Failed to link shader program!\n");
+		printf("Error: Failed to link _shader program!\n");
 		printf("%s\n", infoLog);
 		delete[] infoLog;
 	}
@@ -222,14 +223,13 @@ void RenderGeoApp::startup()
 
 	glClearColor(1.f, 1.f, 1.f, 1.f);
 
-	//shader->bind();
-	shader->attach();
-	shader->unbind();
+	//_shader->bind();
+	_shader->attach();
+	_shader->unbind();
 
 	proceduralSphere();
-	
-	
-	std::vector<vec4> halfcircle = generateHalfCircle(1, 4);
+
+	std::vector<vec4> halfcircle = generateHalfCircle(1,4);
 	std::vector<Vertex> verts;
 	for (auto p : halfcircle)
 		verts.push_back(Vertex{ p });
