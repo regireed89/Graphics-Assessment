@@ -19,6 +19,8 @@ void Shader::bind()
 void Shader::unbind()
 {
 	glClearColor(1.f, 1.f, 1.f, 1.f);
+	glDeleteShader(m_fragmentShader);
+	glDeleteShader(m_vertexShader); 
 }
 
 void Shader::load(const char* filename, unsigned type)
@@ -73,6 +75,8 @@ void Shader::attach()
 		printf("%s\n", infoLog);
 		delete[] infoLog;
 	}
+	glShaderSource(m_vertexShader, 1, static_cast<const char**>(&vsSource), nullptr);
+	glCompileShader(m_vertexShader);
 }
 
 void Shader::defaultLoad()

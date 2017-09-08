@@ -14,20 +14,22 @@ public:
 	RenderGeoApp();
 	~RenderGeoApp();
 	
-	unsigned int indexCount;
-	unsigned int m_VAO;
-	unsigned int m_VBO;
-	unsigned int m_IBO; 
-	unsigned int m_programID;
+	
 
 
 	Camera* cam;
 	Mesh* mesh;
 	Shader* _shader;
 	vec4 RenderSphere();
-	std::vector<vec4>generateHalfCircle(float radius, unsigned int np);
-	vec4 rotatePoints(std::vector<vec4> points, unsigned int nm);
+	std::vector<vec4>generateHalfCircleX(float radius, unsigned np);
+	std::vector<vec4>generateHalfCircleY(float radius, unsigned int np);
+	std::vector<vec4>generateHalfCircleZ(float radius, unsigned int np);
+	std::vector<vec4>rotatePointsX(std::vector<vec4> points, unsigned int nm);
+	std::vector<vec4>rotatePointsY(std::vector<vec4> points, unsigned int nm);
+	std::vector<vec4>rotatePointsZ(std::vector<vec4> points, unsigned int nm);
+	std::vector<unsigned int>generateIndices(unsigned int np, unsigned int nm);
 	void proceduralSphere();
+	void drawCube();
 
 protected:
 	virtual void startup()override;

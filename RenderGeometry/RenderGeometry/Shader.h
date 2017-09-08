@@ -16,7 +16,5 @@ public:
 	const char* vsSource;
 	const char* fsSource;
 	
-
-private:
 	unsigned int m_program;
 };
