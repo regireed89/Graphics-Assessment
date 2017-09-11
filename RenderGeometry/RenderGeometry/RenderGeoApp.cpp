@@ -355,7 +355,6 @@ void RenderGeoApp::startup()
 	glDeleteShader(vertexShader);*/
 
 
-
 	_shader->attach();
 	_shader->unbind();
 
