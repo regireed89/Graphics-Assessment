@@ -153,7 +153,24 @@ std::vector<vec4> RenderGeoApp::rotatePointsZ(std::vector<vec4> points, unsigned
 
 std::vector<unsigned int> RenderGeoApp::generateIndices(unsigned int np, unsigned int nm)
 {
-	return std::vector<unsigned int>();
+	unsigned int start;
+	unsigned int botleft;
+	unsigned int botright;
+	auto indices = std::vector<unsigned int>();
+	for (int i = 0; i < nm; i++)
+	{
+		start = i;
+
+		for (int j = 0; j < np; j++)
+		{
+			botleft = start;
+			botright = botleft + np;
+			indices.push_back(botleft);
+			indices.push_back(botright);
+		}
+		indices.push_back(0xFFFF);
+	}
+	return indices;
 }
 
 
@@ -353,13 +370,13 @@ void RenderGeoApp::startup()
 	mesh->initialize(vertsx, std::vector<unsigned int>());
 	mesh->Create_Buffers();*/
 
-	std::vector<vec4> halfcircley = generateHalfCircleY(1, 3);
-	std::vector<vec4> rotatex = rotatePointsY(halfcircley, 3);
+	std::vector<vec4> halfcircley = generateHalfCircleY(3, 20);
+	std::vector<vec4> rotatey = rotatePointsY(halfcircley, 20);
 	std::vector<Vertex> vertsy;
-	for (auto p : rotatex)
+	for (auto p : rotatey)
 		vertsy.push_back(Vertex{ p });
 
-	mesh->initialize(vertsy, std::vector<unsigned int>());
+	mesh->initialize(vertsy, generateIndices(20,20));
 	mesh->Create_Buffers();
 
 	/*std::vector<vec4> halfcirclez = generateHalfCircleZ(3, 20);
@@ -370,6 +387,7 @@ void RenderGeoApp::startup()
 
 	mesh->initialize(vertsz, std::vector<unsigned int>());
 	mesh->Create_Buffers();*/
+
 
 }
 
@@ -386,6 +404,8 @@ void RenderGeoApp::draw()
 {
 	glClearColor(1.f, 1.f, 1.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_PRIMITIVE_RESTART);
+	glPrimitiveRestartIndex(0xFFFF);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glLineWidth(2.0f);
@@ -397,6 +417,8 @@ void RenderGeoApp::draw()
 	glUniformMatrix4fv(_shader->getUniform("projectionViewWorldMatrix"), 1, false, glm::value_ptr(mvp));
 	mesh->Bind();
 	glDrawArrays(GL_POINTS, 0, mesh->vertex_count);
+	glDrawElements(GL_TRIANGLE_STRIP, mesh->index_count,GL_UNSIGNED_INT, nullptr);
+	glDisable(GL_TRIANGLE_STRIP);
 	//glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_INT, nullptr);
 	mesh->Unbind();
 	glUseProgram(0);
