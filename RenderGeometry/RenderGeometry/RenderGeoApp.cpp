@@ -157,13 +157,13 @@ std::vector<unsigned int> RenderGeoApp::generateIndices(unsigned int np, unsigne
 	unsigned int botleft;
 	unsigned int botright;
 	auto indices = std::vector<unsigned int>();
-	for (int i = 0; i < nm; i++)
+	for (int i = 0; i <= nm; i++)
 	{
 		start = i;
 
-		for (int j = 0; j < np; j++)
+		for (int j = 0; j <= np; j++)
 		{
-			botleft = start;
+			botleft = start + j;
 			botright = botleft + np;
 			indices.push_back(botleft);
 			indices.push_back(botright);
@@ -410,7 +410,7 @@ void RenderGeoApp::draw()
 	glLineWidth(2.0f);
 	glPointSize(2.0f);
 	glUseProgram(_shader->m_program);
-	glm::mat4 view = glm::lookAt(glm::vec3(10, 0, 0), glm::vec3(0), glm::vec3(0, 1, 0));
+	glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 	mat4 mvp = projection * view * glm::mat4(1);
 	glUniformMatrix4fv(_shader->getUniform("projectionViewWorldMatrix"), 1, false, glm::value_ptr(mvp));
