@@ -157,11 +157,11 @@ std::vector<unsigned int> RenderGeoApp::generateIndices(unsigned int np, unsigne
 	unsigned int botleft;
 	unsigned int botright;
 	auto indices = std::vector<unsigned int>();
-	for (int i = 0; i <= nm; i++)
+	for (int i = 0; i < nm; i++)
 	{
 		start = i;
 
-		for (int j = 0; j <= np; j++)
+		for (int j = 0; j < np; j++)
 		{
 			botleft = start + j;
 			botright = botleft + np;
@@ -172,7 +172,6 @@ std::vector<unsigned int> RenderGeoApp::generateIndices(unsigned int np, unsigne
 	}
 	return indices;
 }
-
 
 void RenderGeoApp::proceduralSphere()
 {
