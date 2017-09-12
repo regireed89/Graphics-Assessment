@@ -71,3 +71,24 @@ void Mesh::Unbind()
 {
 	glBindVertexArray(0);
 }
+
+void Mesh::Draw(unsigned int num)
+{
+	this->Bind();
+	switch (num)
+	{
+	case GL_TRIANGLES:
+		glDrawElements(num, this->index_count, GL_UNSIGNED_INT, 0);
+		break;
+
+	case GL_TRIANGLE_STRIP:
+		glDrawElements(num, this->index_count, GL_UNSIGNED_INT, 0);
+		break;
+
+	case GL_POINT: 
+		glDrawArrays(num, 0, this->vertex_count);
+		break;
+	}
+	this->Unbind();
+
+}

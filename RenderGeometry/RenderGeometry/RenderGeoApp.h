@@ -18,7 +18,10 @@ public:
 
 
 	Camera* cam;
-	Mesh* mesh;
+	Mesh* ball_mesh;
+	Mesh* static_ball_mesh;
+	Mesh* cube_mesh;
+	Mesh* plane_mesh;
 	Shader* _shader;
 	vec4 RenderSphere();
 	std::vector<vec4>generateHalfCircleX(float radius, unsigned np);
@@ -29,7 +32,9 @@ public:
 	std::vector<vec4>rotatePointsZ(std::vector<vec4> points, unsigned int nm);
 	std::vector<unsigned int>generateIndices(unsigned int np, unsigned int nm);
 	void proceduralSphere();
-	void drawCube();
+	void generateCube();
+	void generatePlane();
+	
 
 protected:
 	virtual void startup()override;

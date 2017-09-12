@@ -17,6 +17,7 @@ public:
 	void initialize(std::vector<Vertex>&verts, std::vector<unsigned int>&indices);
 	void Bind();
 	void Unbind();
+	void Draw(unsigned int);
 	unsigned int index_count;
 	unsigned int vertex_count;
 

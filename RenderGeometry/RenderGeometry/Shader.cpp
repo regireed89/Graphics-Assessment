@@ -1,9 +1,12 @@
 #include <iostream>
 #include "Shader.h"
 #include "gl_core_4_4.h"
+#include <GLFW\glfw3.h>
+#include <GLM\glm.hpp>
+#include <GLM\ext.hpp>
 
 
-Shader::Shader(): m_vertexShader(0), m_fragmentShader(0), vsSource(nullptr), fsSource(nullptr), m_program(0)
+Shader::Shader() : m_vertexShader(0), m_fragmentShader(0), vsSource(nullptr), fsSource(nullptr), m_program(0)
 {
 }
 
@@ -13,14 +16,14 @@ Shader::~Shader()
 
 void Shader::bind()
 {
-		
+	glUseProgram(m_program);
 }
 
 void Shader::unbind()
 {
 	glClearColor(1.f, 1.f, 1.f, 1.f);
 	glDeleteShader(m_fragmentShader);
-	glDeleteShader(m_vertexShader); 
+	glDeleteShader(m_vertexShader);
 }
 
 void Shader::load(const char* filename, unsigned type)
@@ -35,10 +38,10 @@ void Shader::load(const char* filename, unsigned type)
 	fseek(file, 0, SEEK_SET);
 	auto num = fread(buffer, sizeof(char), size + 1, file);
 	buffer[num] = '\0';
-	
+
 	const char * data = buffer;
 
-	switch(type)
+	switch (type)
 	{
 	case GL_VERTEX_SHADER:
 		m_vertexShader = glCreateShader(type);
@@ -50,7 +53,7 @@ void Shader::load(const char* filename, unsigned type)
 		m_fragmentShader = glCreateShader(type);
 		fsSource = buffer;
 		glShaderSource(m_fragmentShader, 1, (const char**)&fsSource, 0);
-		glCompileShader(m_fragmentShader);		
+		glCompileShader(m_fragmentShader);
 	}
 }
 
@@ -85,6 +88,16 @@ void Shader::defaultLoad()
 
 unsigned Shader::getUniform(const char* c)
 {
-	unsigned int projectionViewUniform = glGetUniformLocation(m_program, c);
-	return projectionViewUniform;
+	unsigned  h = glGetUniformLocation(m_program, c);
+	return h;
+}
+
+void Shader::bindUniform(const char* c, float val)
+{
+	glUniform1f(getUniform(c), val);
+}
+
+void Shader::bindUniform(const char* c, glm::mat4 val)
+{
+	glUniformMatrix4fv(getUniform(c), 1, false, glm::value_ptr(val));
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include <GLM\glm.hpp>
 class Shader
 {
 public:
@@ -11,6 +12,8 @@ public:
 	void defaultLoad();
 	//void load();
 	unsigned int getUniform(const char *);
+	void bindUniform(const char * c, float val);
+	void bindUniform(const char *, glm::mat4);
 	unsigned int m_vertexShader;
 	unsigned int m_fragmentShader;
 	const char* vsSource;
