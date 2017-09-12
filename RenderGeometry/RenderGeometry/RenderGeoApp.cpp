@@ -8,12 +8,16 @@
 #include <GLFW\glfw3.h>
 #include "Shader.h"
 using namespace glm;
+using namespace std;
 #define PI 3.1415926535897932384626433832795
 
 RenderGeoApp::RenderGeoApp()
 {
 	cam = new Camera();
-	mesh = new Mesh();
+	ball_mesh = new Mesh();
+	cube_mesh = new Mesh();
+	plane_mesh = new Mesh();
+	static_ball_mesh = new Mesh();
 
 }
 
@@ -42,10 +46,11 @@ std::vector<vec4> RenderGeoApp::generateHalfCircleX(float radius, unsigned np)
 
 std::vector<vec4> RenderGeoApp::generateHalfCircleY(float radius, unsigned int np)
 {
+	float slice = PI / (np-1);
 	auto pts = std::vector<vec4>();
 	for (int i = 0; i < np; i++)
 	{
-		float slice = PI / np;
+		
 		float theta = slice * i;
 
 		float x = sin(theta) * radius;
@@ -76,14 +81,14 @@ std::vector<vec4> RenderGeoApp::generateHalfCircleZ(float radius, unsigned int n
 		pts.push_back(md.position);
 	}
 	return pts;
-	return std::vector<vec4>();
+	 
 }
 
 std::vector<vec4> RenderGeoApp::rotatePointsX(std::vector<vec4> points, unsigned int nm)
 {
 	auto supercalifragilisticexpialidocious = std::vector<vec4>();
 
-	for (int i = 0; i < nm; i++)
+	for (int i = 0; i <= nm; i++)
 	{
 		float slice = 2 * PI / nm;
 		float phi = slice * i;
@@ -107,7 +112,7 @@ std::vector<vec4> RenderGeoApp::rotatePointsX(std::vector<vec4> points, unsigned
 std::vector<vec4> RenderGeoApp::rotatePointsY(std::vector<vec4> points, unsigned int nm)
 {
 	auto supercalifragilisticexpialidocious = std::vector<vec4>();
-	for (int i = 0; i < nm; i++)
+	for (int i = 0; i <= nm; i++)
 	{
 		float slice = 2 * PI / nm;
 		float phi = slice * i;
@@ -130,7 +135,7 @@ std::vector<vec4> RenderGeoApp::rotatePointsY(std::vector<vec4> points, unsigned
 std::vector<vec4> RenderGeoApp::rotatePointsZ(std::vector<vec4> points, unsigned int nm)
 {
 	auto supercalifragilisticexpialidocious = std::vector<vec4>();
-	for (int i = 0; i < nm; i++)
+	for (int i = 0; i <= nm; i++)
 	{
 		float slice = 2 * PI / nm;
 		float phi = slice * i;
@@ -159,7 +164,7 @@ std::vector<unsigned int> RenderGeoApp::generateIndices(unsigned int np, unsigne
 	auto indices = std::vector<unsigned int>();
 	for (int i = 0; i < nm; i++)
 	{
-		start = i;
+		start = i * nm;
 
 		for (int j = 0; j < np; j++)
 		{
@@ -170,6 +175,7 @@ std::vector<unsigned int> RenderGeoApp::generateIndices(unsigned int np, unsigne
 		}
 		indices.push_back(0xFFFF);
 	}
+	
 	return indices;
 }
 
@@ -295,11 +301,42 @@ void RenderGeoApp::proceduralSphere()
 		37,36,33,
 	};
 
-	mesh->initialize(verts, indices);
-	mesh->Create_Buffers();
+	static_ball_mesh->initialize(verts, indices);
+	static_ball_mesh->Create_Buffers();
+}
 
-	verts.clear();
-	indices.clear();
+void RenderGeoApp::generateCube()
+{
+
+	Vertex x0 = { glm::vec4(0,0,0,1),glm::vec4(0,0,0,1) };
+	Vertex x1 = { glm::vec4(1,0,0,1),glm::vec4(0,0,0,1) };
+	Vertex x2 = { glm::vec4(1,-1,0,1),glm::vec4(0,0,0,1) };
+	Vertex x3 = { glm::vec4(0,-1,0,1),glm::vec4(0,0,0,1) };
+
+	Vertex x4 = { glm::vec4(0,0,-1,1),glm::vec4(1,0,0,1) };
+	Vertex x5 = { glm::vec4(1,0,-1,1),glm::vec4(1,0,0,1) };
+	Vertex x6 = { glm::vec4(1,-1,-1,1),glm::vec4(1,0,0,1) };
+	Vertex x7 = { glm::vec4(0,-1,-1,1),glm::vec4(1,0,0,1) };
+
+	std::vector<Vertex> verts{ x0,x1,x2,x3,x4,x5,x6,x7 };
+	std::vector<unsigned int>indices = { 0,1,2, 0,3,2, 0,1,5, 0,4,5, 0,4,7, 0,3,7, 6,2,3, 6,7,3, 6,5,1, 6,2,1, 6,5,4, 6,7,4 };
+
+	cube_mesh->initialize(verts, indices);
+	cube_mesh->Create_Buffers();
+}
+
+void RenderGeoApp::generatePlane()
+{
+	Vertex x0 = { vec4(0,0,0,1), vec4(1,0,0,1) };
+	Vertex x1 = { vec4(1,0,0,1), vec4(1,0,0,1) };
+	Vertex x2 = { vec4(1,0,-1,1), vec4(1,0,0,1) };
+	Vertex x3 = { vec4(0,0,-1,1), vec4(1,0,0,1) };
+
+	std::vector<Vertex> vert = { x0,x1,x2,x3 };
+	std::vector<unsigned int> indices = { 0,1,2, 0,2,3 };
+
+	plane_mesh->initialize(vert, indices);
+	plane_mesh->Create_Buffers();
 }
 
 void RenderGeoApp::startup()
@@ -308,85 +345,26 @@ void RenderGeoApp::startup()
 	_shader->load("vsSource.vert", GL_VERTEX_SHADER);
 	_shader->load("fsSource.frag", GL_FRAGMENT_SHADER);
 
-	/*const char* vsSource = "#version 410\n \
-						layout(location = 0) in vec4 position; \
-						layout(location=1) in vec4 color; \
-						out vec4 vColor; \
-						uniform mat4 projectionViewWorldMatrix; \
-						void main() { vColor = color; gl_Position = projectionViewWorldMatrix * position; }";
-
-	const char* fsSource = "#version 410\n \
-						in vec4 vColor; \
-						out vec4 fragColor; \
-						void main() { fragColor = vColor; }";
-
-	int success = GL_FALSE;
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-	glShaderSource(vertexShader, 1, (const char**)&vsSource, 0);
-	glCompileShader(vertexShader);
-	glShaderSource(fragmentShader, 1, (const char**)&fsSource, 0);
-	glCompileShader(fragmentShader);
-
-
-	m_programID = glCreateProgram();
-	glAttachShader(m_programID, vertexShader);
-	glAttachShader(m_programID, fragmentShader);
-	glLinkProgram(m_programID);
-
-	glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
-	if (success == GL_FALSE)
-	{
-		int infoLogLength = 0;
-		glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &infoLogLength);
-		char* infoLog = new char[infoLogLength];
-
-		glGetProgramInfoLog(m_programID, infoLogLength, nullptr, infoLog);
-		printf("Error: Failed to link _shader program!\n");
-		printf("%s\n", infoLog);
-		delete[] infoLog;
-	}
-	glShaderSource(vertexShader, 1, static_cast<const char**>(&vsSource), nullptr);
-	glCompileShader(vertexShader);
-
-	glDeleteShader(fragmentShader);
-	glDeleteShader(vertexShader);*/
-
 
 	_shader->attach();
 	_shader->unbind();
 
-	//proceduralSphere();
-
-	/*std::vector<vec4> halfcirclex = generateHalfCircleX(3, 20);
-	std::vector<vec4> rotatex = rotatePointsX(halfcirclex, 20);
-	std::vector<Vertex> vertsx;
-	for (auto p : rotatex)
-		vertsx.push_back(Vertex{ p });
-
-	mesh->initialize(vertsx, std::vector<unsigned int>());
-	mesh->Create_Buffers();*/
+	proceduralSphere();
+	generateCube();
+	generatePlane();
 
 	std::vector<vec4> halfcircley = generateHalfCircleY(3, 20);
 	std::vector<vec4> rotatey = rotatePointsY(halfcircley, 20);
 	std::vector<Vertex> vertsy;
 	for (auto p : rotatey)
-		vertsy.push_back(Vertex{ p });
+		vertsy.push_back(Vertex{ p, glm::normalize(p) });
 
-	mesh->initialize(vertsy, generateIndices(20,20));
-	mesh->Create_Buffers();
-
-	/*std::vector<vec4> halfcirclez = generateHalfCircleZ(3, 20);
-	std::vector<vec4> rotatez = rotatePointsZ(halfcirclez, 20);
-	std::vector<Vertex> vertsz;
-	for (auto p : rotatez)
-		vertsz.push_back(Vertex{ p });
-
-	mesh->initialize(vertsz, std::vector<unsigned int>());
-	mesh->Create_Buffers();*/
+	ball_mesh->initialize(vertsy, generateIndices(20,20));
+	ball_mesh->Create_Buffers();
 
 
+
+	
 }
 
 void RenderGeoApp::update(float delta)
@@ -402,22 +380,36 @@ void RenderGeoApp::draw()
 {
 	glClearColor(1.f, 1.f, 1.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_PRIMITIVE_RESTART);
-	glPrimitiveRestartIndex(0xFFFF);
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(2.0f);
+	
+	glLineWidth(1.0f);
 	glPointSize(2.0f);
-	glUseProgram(_shader->m_program);
+
+	_shader->bind();
 	glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
-	mat4 mvp = projection * view * glm::mat4(1);
-	glUniformMatrix4fv(_shader->getUniform("projectionViewWorldMatrix"), 1, false, glm::value_ptr(mvp));
-	mesh->Bind();
-	glDrawArrays(GL_POINTS, 0, mesh->vertex_count);
-	glDrawElements(GL_TRIANGLE_STRIP, mesh->index_count,GL_UNSIGNED_INT, nullptr);
-	glDisable(GL_TRIANGLE_STRIP);
-	//glDrawElements(GL_TRIANGLES, mesh->index_count, GL_UNSIGNED_INT, nullptr);
-	mesh->Unbind();
+	mat4 mvp = projection * view * glm::scale(vec3(3, 3, 3)) * glm::translate(vec3(0, 0, -3));
+	_shader->bindUniform("projectionViewWorldMatrix", mvp);
+	_shader->bindUniform("time", glfwGetTime());
+	cube_mesh->Draw(GL_TRIANGLES);
+
+	mvp = projection * view;
+	_shader->bindUniform("projectionViewWorldMatrix", mvp);
+	_shader->bindUniform("time", glfwGetTime());
+	ball_mesh->Draw(GL_TRIANGLE_STRIP);
+
+	mvp = projection * view * glm::scale(vec3(5,5,5)) * glm::translate(vec3(-3,0,0));
+	_shader->bindUniform("projectionViewWorldMatrix", mvp);
+	_shader->bindUniform("time", glfwGetTime());
+	plane_mesh->Draw(GL_TRIANGLES);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	mvp = projection * view * glm::scale(vec3(.5, .5, .5)) * glm::translate(vec3(0, 0, 14));
+	_shader->bindUniform("projectionViewWorldMatrix", mvp);
+	_shader->bindUniform("time", glfwGetTime());
+	static_ball_mesh->Draw(GL_TRIANGLES);
+
 	glUseProgram(0);
+	
 }
