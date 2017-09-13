@@ -46,18 +46,17 @@ std::vector<vec4> RenderGeoApp::generateHalfCircleX(float radius, unsigned np)
 
 std::vector<vec4> RenderGeoApp::generateHalfCircleY(float radius, unsigned int np)
 {
-	float slice = PI / (np-1);
+	float slice = PI / (np-1);//find angle between points based on # of points
 	auto pts = std::vector<vec4>();
 	for (int i = 0; i < np; i++)
 	{
-		
-		float theta = slice * i;
+		float theta = slice * i;//angle of rotation from 0 for each specific point
 
-		float x = sin(theta) * radius;
+		float x = sin(theta) * radius;//rotation math for points
 		float y = cos(theta) * radius;
 		float z = 0;
 		auto md = Vertex();
-		md.position = vec4(x, y, z, 1);
+		md.position = vec4(x, y, z, 1);//position of point on circle
 		md.color = vec4(1, 0, 0, 0);
 		pts.push_back(md.position);
 	}
@@ -114,7 +113,7 @@ std::vector<vec4> RenderGeoApp::rotatePointsY(std::vector<vec4> points, unsigned
 	auto supercalifragilisticexpialidocious = std::vector<vec4>();
 	for (int i = 0; i <= nm; i++)
 	{
-		float slice = 2 * PI / nm;
+		float slice = 2 * PI / nm;// determines angle between each meridian on shere
 		float phi = slice * i;
 		for (int j = 0; j < points.size(); j++)
 		{
@@ -342,9 +341,8 @@ void RenderGeoApp::generatePlane()
 void RenderGeoApp::startup()
 {
 	_shader = new Shader();
-	_shader->load("vsSource.vert", GL_VERTEX_SHADER);
+	_shader->load("vsSource.vert", GL_VERTEX_SHADER);//
 	_shader->load("fsSource.frag", GL_FRAGMENT_SHADER);
-
 
 	_shader->attach();
 	_shader->unbind();
@@ -361,10 +359,6 @@ void RenderGeoApp::startup()
 
 	ball_mesh->initialize(vertsy, generateIndices(20,20));
 	ball_mesh->Create_Buffers();
-
-
-
-	
 }
 
 void RenderGeoApp::update(float delta)
@@ -404,7 +398,6 @@ void RenderGeoApp::draw()
 	_shader->bindUniform("time", glfwGetTime());
 	plane_mesh->Draw(GL_TRIANGLES);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	mvp = projection * view * glm::scale(vec3(.5, .5, .5)) * glm::translate(vec3(0, 0, 14));
 	_shader->bindUniform("projectionViewWorldMatrix", mvp);
 	_shader->bindUniform("time", glfwGetTime());
