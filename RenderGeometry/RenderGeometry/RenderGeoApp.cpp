@@ -307,10 +307,10 @@ void RenderGeoApp::proceduralSphere()
 void RenderGeoApp::generateCube()
 {
 
-	Vertex x0 = { glm::vec4(0,0,0,1),glm::vec4(0,0,0,1) };
-	Vertex x1 = { glm::vec4(1,0,0,1),glm::vec4(0,0,0,1) };
-	Vertex x2 = { glm::vec4(1,-1,0,1),glm::vec4(0,0,0,1) };
-	Vertex x3 = { glm::vec4(0,-1,0,1),glm::vec4(0,0,0,1) };
+	Vertex x0 = { glm::vec4(0,0,0,1),glm::vec4(1,0,0,1) };
+	Vertex x1 = { glm::vec4(1,0,0,1),glm::vec4(1,0,0,1) };
+	Vertex x2 = { glm::vec4(1,-1,0,1),glm::vec4(1,0,0,1) };
+	Vertex x3 = { glm::vec4(0,-1,0,1),glm::vec4(1,0,0,1) };
 
 	Vertex x4 = { glm::vec4(0,0,-1,1),glm::vec4(1,0,0,1) };
 	Vertex x5 = { glm::vec4(1,0,-1,1),glm::vec4(1,0,0,1) };
