@@ -23,7 +23,6 @@ public:
 	Mesh* cube_mesh;
 	Mesh* plane_mesh;
 	Shader* _shader;
-	vec4 RenderSphere();
 	std::vector<vec4>generateHalfCircleX(float radius, unsigned np);
 	std::vector<vec4>generateHalfCircleY(float radius, unsigned int np);
 	std::vector<vec4>generateHalfCircleZ(float radius, unsigned int np);

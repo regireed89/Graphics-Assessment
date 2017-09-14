@@ -376,7 +376,8 @@ void RenderGeoApp::draw()
 	glEnable(GL_DEPTH_TEST);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glLineWidth(1.0f);
 	glPointSize(2.0f);
 
