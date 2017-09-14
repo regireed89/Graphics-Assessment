@@ -1,11 +1,15 @@
 #pragma once
 #include <vector>
-#include "RenderGeoApp.h"
+#include "LightingApp.h"
 
 struct Vertex
 {
-	vec4 position;
-	vec4 color;
+	glm::vec4 position;
+	glm::vec4 color;
+	glm::vec4 normal;
+	glm::vec4 tangent;
+	glm::vec4 bitangent;
+	glm::vec2 texcoord;
 };
 class Mesh
 {

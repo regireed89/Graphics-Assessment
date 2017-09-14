@@ -1,10 +1,11 @@
 #include "Mesh.h"
 #include "gl_core_4_4.h"
-#include <glm.hpp>
+#include <GLM/glm.hpp>
 #include <GLM/fwd.hpp>
 #include <GLM/ext.hpp>
 #include <vector>
-#include "RenderGeoApp.h"
+using namespace glm;
+
 
 Mesh::Mesh()
 {
