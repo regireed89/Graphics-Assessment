@@ -341,7 +341,7 @@ void RenderGeoApp::generatePlane()
 void RenderGeoApp::startup()
 {
 	_shader = new Shader();
-	_shader->load("vsSource.vert", GL_VERTEX_SHADER);//
+	_shader->load("vsSource.vert", GL_VERTEX_SHADER);
 	_shader->load("fsSource.frag", GL_FRAGMENT_SHADER);
 
 	_shader->attach();
