@@ -357,7 +357,7 @@ void RenderGeoApp::startup()
 	for (auto p : rotatey)
 		vertsy.push_back(Vertex{ p, glm::normalize(p) });
 
-	ball_mesh->initialize(vertsy, generateIndices(20,20));
+	ball_mesh->initialize(vertsy, generateIndices(20,20));//std::vector<uhnsigned int>());
 	ball_mesh->Create_Buffers();
 }
 
@@ -377,7 +377,7 @@ void RenderGeoApp::draw()
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glLineWidth(1.0f);
 	glPointSize(2.0f);
 
