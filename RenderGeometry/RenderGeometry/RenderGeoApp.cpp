@@ -113,8 +113,8 @@ std::vector<vec4> RenderGeoApp::rotatePointsY(std::vector<vec4> points, unsigned
 	auto supercalifragilisticexpialidocious = std::vector<vec4>();
 	for (int i = 0; i <= nm; i++)
 	{
-		float slice = 2 * PI / nm;// determines angle between each meridian on shere
-		float phi = slice * i;
+		float slice = 2 * PI / nm;// determines angle between each meridian on sphere
+		float phi = slice * i;//angle of rotation for meridians
 		for (int j = 0; j < points.size(); j++)
 		{
 			float x = points[j].x * cos(phi) + points[j].z * -sin(phi);
@@ -163,22 +163,22 @@ std::vector<unsigned int> RenderGeoApp::generateIndices(unsigned int np, unsigne
 	auto indices = std::vector<unsigned int>();
 	for (int i = 0; i < nm; i++)
 	{
-		start = i * nm;
+		start = i * nm;//tells the triangle strips what point to start at
 
 		for (int j = 0; j < np; j++)
 		{
-			botleft = start + j;
-			botright = botleft + np;
+			botleft = start + j;//sets bottom left of the triangle strip
+			botright = botleft + np;//sets the bottom right of the triangle strip
 			indices.push_back(botleft);
 			indices.push_back(botright);
 		}
-		indices.push_back(0xFFFF);
+		indices.push_back(0xFFFF);//ends the current triangle strip and moves over to the next
 	}
 	
 	return indices;
 }
 
-void RenderGeoApp::proceduralSphere()
+void RenderGeoApp::TriangleSphere()
 {
 	Vertex x0 = { glm::vec4(0, 4, 0, 1), glm::vec4(1, .1, .1, 0) };
 
@@ -311,14 +311,16 @@ void RenderGeoApp::generateCube()
 	Vertex x1 = { glm::vec4(1,0,0,1),glm::vec4(1,0,0,1) };
 	Vertex x2 = { glm::vec4(1,-1,0,1),glm::vec4(1,0,0,1) };
 	Vertex x3 = { glm::vec4(0,-1,0,1),glm::vec4(1,0,0,1) };
-
+	//defines positions and color of points
 	Vertex x4 = { glm::vec4(0,0,-1,1),glm::vec4(1,0,0,1) };
 	Vertex x5 = { glm::vec4(1,0,-1,1),glm::vec4(1,0,0,1) };
 	Vertex x6 = { glm::vec4(1,-1,-1,1),glm::vec4(1,0,0,1) };
 	Vertex x7 = { glm::vec4(0,-1,-1,1),glm::vec4(1,0,0,1) };
 
 	std::vector<Vertex> verts{ x0,x1,x2,x3,x4,x5,x6,x7 };
-	std::vector<unsigned int>indices = { 0,1,2, 0,3,2, 0,1,5, 0,4,5, 0,4,7, 0,3,7, 6,2,3, 6,7,3, 6,5,1, 6,2,1, 6,5,4, 6,7,4 };
+	std::vector<unsigned int>indices = { //how the points are connected to make triangles
+		0,1,2, 0,3,2, 0,1,5, 0,4,5, 0,4,7, 0,3,7, 
+		6,2,3, 6,7,3, 6,5,1, 6,2,1, 6,5,4, 6,7,4 };
 
 	cube_mesh->initialize(verts, indices);
 	cube_mesh->Create_Buffers();
@@ -347,17 +349,17 @@ void RenderGeoApp::startup()
 	_shader->attach();
 	_shader->unbind();
 
-	proceduralSphere();
+	TriangleSphere();
 	generateCube();
 	generatePlane();
 
-	std::vector<vec4> halfcircley = generateHalfCircleY(3, 20);
-	std::vector<vec4> rotatey = rotatePointsY(halfcircley, 20);
+	std::vector<vec4> halfcircley = generateHalfCircleY(3, 20);//makes half circle
+	std::vector<vec4> rotatey = rotatePointsY(halfcircley, 20);//rotates points in half circle
 	std::vector<Vertex> vertsy;
 	for (auto p : rotatey)
 		vertsy.push_back(Vertex{ p, glm::normalize(p) });
 
-	ball_mesh->initialize(vertsy, generateIndices(20,20));//std::vector<uhnsigned int>());
+	ball_mesh->initialize(vertsy, generateIndices(20,20));//makes indices for sphere
 	ball_mesh->Create_Buffers();
 }
 
@@ -379,7 +381,7 @@ void RenderGeoApp::draw()
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glLineWidth(1.0f);
-	glPointSize(2.0f);
+	glPointSize(4.0f);
 
 	_shader->bind();
 	glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
@@ -407,3 +409,4 @@ void RenderGeoApp::draw()
 	glUseProgram(0);
 	
 }
+ 

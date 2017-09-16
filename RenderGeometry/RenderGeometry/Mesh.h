@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 #include "RenderGeoApp.h"
-
 struct Vertex
 {
 	vec4 position;
@@ -20,7 +19,6 @@ public:
 	void Draw(unsigned int);
 	unsigned int index_count;
 	unsigned int vertex_count;
-
 private:
 	unsigned int m_VAO;
 	unsigned int m_VBO;

@@ -30,7 +30,7 @@ public:
 	std::vector<vec4>rotatePointsY(std::vector<vec4> points, unsigned int nm);
 	std::vector<vec4>rotatePointsZ(std::vector<vec4> points, unsigned int nm);
 	std::vector<unsigned int>generateIndices(unsigned int np, unsigned int nm);
-	void proceduralSphere();
+	void TriangleSphere();
 	void generateCube();
 	void generatePlane();
 	

@@ -38,9 +38,7 @@ void Shader::load(const char* filename, unsigned type)
 	fseek(file, 0, SEEK_SET);
 	auto num = fread(buffer, sizeof(char), size + 1, file);
 	buffer[num] = '\0';
-
 	const char * data = buffer;
-
 	switch (type)
 	{
 	case GL_VERTEX_SHADER:
