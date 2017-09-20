@@ -27,6 +27,6 @@ in vec4 vTangent;
 	vec3 N = vNormal.xyz;
 	vec3 Ambient = Ka * Ia;
 	float Ndl = max(0.0f,dot(direction, N));
-	//vec3 Diffuse = Kd * Id * Ndl;
-	FragColor = vec4(1) * vec4(Ambient ,1);
+	vec3 Diffuse = Kd * Id * Ndl;
+	FragColor = vec4(Ambient+Diffuse ,1);
  }
