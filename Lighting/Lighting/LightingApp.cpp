@@ -119,8 +119,13 @@ void LightingApp::generateSphere(unsigned int segments, unsigned int rings,
 
 void LightingApp::startup()
 {
-	_camera->setLookAt(vec3(10, 0, 10), vec3(5, 0, 5), vec3(0, 1, 0));
-	m_directionalLight.diffuse = vec3(0,1,0);
+	glClearColor(1.f, 1.f, 1.f, 0.f);
+	_phongShader->load("phong.vert", GL_VERTEX_SHADER);
+	_phongShader->load("phong.frag", GL_FRAGMENT_SHADER);
+	_phongShader->attach();
+
+	_camera->setLookAt(vec3(10, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
+	m_directionalLight.diffuse = vec3(1);
 	m_directionalLight.specular = vec3(1);
 	m_ambientLight = vec3(0,0.25f,0);
 
@@ -128,79 +133,76 @@ void LightingApp::startup()
 	m_material.ambient = vec3(1);
 	m_material.specular = vec3(1);
 	m_material.specularPower = 30;
-	glClearColor(1.f, 1.f, 1.f, 0.f);
-	generateSphere(100, 100, m_VAO, m_VBO, m_IBO, m_index_count);
-	m_modeMatrix = glm::scale(vec3(5));
 
-	_phongShader->load("phong.vert", GL_VERTEX_SHADER);
-	_phongShader->load("phong.frag", GL_FRAGMENT_SHADER);
-	_phongShader->attach();
-	
+	generateSphere(50, 50, m_VAO, m_VBO, m_IBO, m_index_count);
+	m_modeMatrix = glm::scale(vec3(5));
 
 	
 }
 
 void LightingApp::update(float deltaTime)
 {
-
+	
 	runTime += deltaTime;
+	_camera->update(deltaTime);
 	m_directionalLight.direction = normalize(vec3(sinf(runTime / 2.f), 0, cosf(runTime / 2.f)));
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		glm::vec3 npos = glm::vec3(_camera->getWorldTransform()[3] -= _camera->getWorldTransform()[2]);
+		glm::vec3 npos = glm::vec3(_camera->getWorldTransform()[3] -= _camera->getWorldTransform()[2] * mat4(0.25f));
 		_camera->setPosition(npos);
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		glm::vec3 nneg = glm::vec3(_camera->getWorldTransform()[3] += _camera->getWorldTransform()[2]);
+		glm::vec3 nneg = glm::vec3(_camera->getWorldTransform()[3] += _camera->getWorldTransform()[2] * mat4(0.25f));
 		_camera->setPosition(nneg);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		glm::vec3 npos = glm::vec3(_camera->getWorldTransform()[3] -= _camera->getWorldTransform()[0]);
+		glm::vec3 npos = glm::vec3(_camera->getWorldTransform()[3] -= _camera->getWorldTransform()[0] * mat4(0.25f));
 		_camera->setPosition(npos);
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		glm::vec3 nneg = glm::vec3(_camera->getWorldTransform()[3] += _camera->getWorldTransform()[0]);
+		glm::vec3 nneg = glm::vec3(_camera->getWorldTransform()[3] += _camera->getWorldTransform()[0] * mat4(0.25f));
 		_camera->setPosition(nneg);
 	}
-
-	//controls rotation of camera using mouse
-	static bool sbMouseButtonDown = false;
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
 	{
+		////controls rotation of camera using mouse
+		//static bool sbMouseButtonDown = false;
+		//if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+		//{
 
-		static double siPrevMouseX = 0;
-		static double siPrevMouseY = 0;
+		//	static double siPrevMouseX = 0;
+		//	static double siPrevMouseY = 0;
 
-		if (sbMouseButtonDown == false)
-		{
-			sbMouseButtonDown = true;
-			glfwGetCursorPos(window, &siPrevMouseX, &siPrevMouseY);
-		}
-		double mouseX = 0, mouseY = 0;
-		glfwGetCursorPos(window, &mouseX, &mouseY);
+		//	if (sbMouseButtonDown == false)
+		//	{
+		//		sbMouseButtonDown = true;
+		//		glfwGetCursorPos(window, &siPrevMouseX, &siPrevMouseY);
+		//	}
+		//	double mouseX = 0, mouseY = 0;
+		//	glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		double iDeltaX = mouseX - siPrevMouseX;
-		double iDeltaY = mouseY - siPrevMouseY;
+		//	double iDeltaX = mouseX - siPrevMouseX;
+		//	double iDeltaY = mouseY - siPrevMouseY;
 
-		siPrevMouseX = mouseX;
-		siPrevMouseY = mouseY;
+		//	siPrevMouseX = mouseX;
+		//	siPrevMouseY = mouseY;
 
-		//mat4 z = mat4(cos(iDeltaX*iDeltaY), -sin(iDeltaX*iDeltaY), 0, 0, sin(iDeltaX*iDeltaY), cos(iDeltaX*iDeltaY), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-		mat4 x = mat4(1, 0, 0, 0, 0, cos(iDeltaY / 200), -sin(iDeltaY / 200), 0, 0, sin(iDeltaY / 200), cos(iDeltaY / 200), 0, 0, 0, 0, 1);
-		mat4 y = mat4(cos(iDeltaX / 50), 0, sin(iDeltaX / 200), 0, 0, 1, 0, 0, -sin(iDeltaX / 200), 0, cos(iDeltaX / 200), 0, 0, 0, 0, 1);
+		//	//mat4 z = mat4(cos(iDeltaX*iDeltaY), -sin(iDeltaX*iDeltaY), 0, 0, sin(iDeltaX*iDeltaY), cos(iDeltaX*iDeltaY), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+		//	mat4 x = mat4(1, 0, 0, 0, 0, cos(iDeltaY / 200), -sin(iDeltaY / 200), 0, 0, sin(iDeltaY / 200), cos(iDeltaY / 200), 0, 0, 0, 0, 1);
+		//	mat4 y = mat4(cos(iDeltaX / 50), 0, sin(iDeltaX / 200), 0, 0, 1, 0, 0, -sin(iDeltaX / 200), 0, cos(iDeltaX / 200), 0, 0, 0, 0, 1);
 
 
 
-		//auto Elevation = rotate(static_cast<float>(iDeltaX) * 1 / 800, vec3(0, 1, 0));
-		//auto Azimuth = rotate(static_cast<float>(iDeltaY) * 1 / 800, vec3(1, 0, 0));
-		_camera->m_view = x * y * _camera->m_view;
+		//	//auto Elevation = rotate(static_cast<float>(iDeltaX) * 1 / 800, vec3(0, 1, 0));
+		//	//auto Azimuth = rotate(static_cast<float>(iDeltaY) * 1 / 800, vec3(1, 0, 0));
+		//	_camera->getView() = x * y * _camera->getView();
+		//	_camera->getWorldTransform() = glm::inverse(_camera->getView());
+		//}
 	}
-
-	if (glfwGetKey(window, GLFW_KEY_R))
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
 	{
 		_camera->setLookAt(vec3(10, 10, 10), vec3(0, 0, 0), vec3(0, 1, 0));
 	}
@@ -214,15 +216,15 @@ void LightingApp::draw()
 {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
-	_phongShader->bind();
-
-	mat4 pvm = _camera->getProjectionView() * m_modeMatrix;
-
+	mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
+	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
+	mat4 model = glm::scale(vec3(5));
+	mat4 mvp = projection * view * model;
+	_phongShader->bind();	
 	int matUniform = _phongShader->getUniform("ProjectionViewModel");
-	glUniformMatrix4fv(matUniform, 1, GL_FALSE, &pvm[0][0]);
+	glUniformMatrix4fv(matUniform, 1, GL_FALSE, &mvp[0][0]);
 
 	int lightUniform = _phongShader->getUniform("direction");
 	glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
@@ -248,17 +250,14 @@ void LightingApp::draw()
 	lightUniform = _phongShader->getUniform("a");
 	glUniform1fv(lightUniform, 1, &m_material.specularPower);
 	
+
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, 0);
-
+	glBindVertexArray(0);
 	_phongShader->unbind();
 
 
 	
 
 }
-
-
-
-
 

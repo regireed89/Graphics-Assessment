@@ -19,15 +19,13 @@ public:
 	glm::mat4 getProjection();
 	glm::mat4 getProjectionView();
 	glm::mat4 getWorldTransform();
-	mat4 m_view;
+	glm::mat4 worldTransform;
+	glm::mat4 projectionViewTransform;
 
 private:
-	glm::mat4 worldTransform;
-	glm::mat4 viewTransform;
-	glm::mat4 projectionTransform;
-	glm::mat4 projectionViewTransform;
 	glm::mat4 updateProjectionViewTransform();
 	glm::mat4 m_projection;
+	glm::mat4 m_view;
 	float m_fov;
 	float m_aspectRatio;
 	float m_near;

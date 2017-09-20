@@ -21,6 +21,9 @@ Camera::~Camera()
 
 void Camera::update(float deltaTime)
 {
+	m_view = glm::inverse(worldTransform);
+	m_projection = setPerspective(m_fov, m_aspectRatio, m_near, m_far);
+	projectionViewTransform = m_projection * m_view;
 }
 
 void Camera::setOrthographic(float left, float right, float bottom, float top, float Near, float Far)
@@ -30,7 +33,6 @@ void Camera::setOrthographic(float left, float right, float bottom, float top, f
 	vec4 z = vec4(0, 0, -2 / (Far - Near), 0);
 	vec4 w = vec4(-((left + right) / 2), -((top + bottom) / 2), -((Far + Near) / 2), 1);
 	mat4 o = mat4(x, y, z, w);
-	
 }
 
 glm::mat4 Camera::setPerspective(float fieldOfView, float aspectRatio, float Near, float Far)
@@ -74,8 +76,8 @@ glm::mat4 Camera::setLookAt(glm::vec3 eye, glm::vec3 center, glm::vec3 up)
 	m_view = View;
 	assert(View == e);
 	mat4 M = inverse(View);
-
-	return M;
+	worldTransform = M;
+	return View;
 }
 
 void Camera::setPosition(glm::vec3 position)
@@ -90,12 +92,12 @@ void Camera::setPosition(glm::vec3 position)
 
 glm::mat4 Camera::getView()
 {
-	return viewTransform;
+	return m_view;
 }
 
 glm::mat4 Camera::getProjection()
 {
-	return projectionTransform;
+	return m_projection;
 }
 
 glm::mat4 Camera::getProjectionView()

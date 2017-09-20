@@ -24,9 +24,12 @@ in vec4 vTangent;
 
  void main()
  {
-	vec3 N = vNormal.xyz;
+	
+	vec3 N = normalize(vNormal).xyz;
+
 	vec3 Ambient = Ka * Ia;
 	float Ndl = max(0.0f,dot(direction, N));
 	vec3 Diffuse = Kd * Id * Ndl;
-	FragColor = vec4(Ambient+Diffuse ,1);
+	//FragColor = vec4(Ambient + Diffuse ,1);
+	FragColor = vNormal;
  }
