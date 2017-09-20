@@ -8,8 +8,9 @@ struct Vertex
 	glm::vec4 color;
 	glm::vec4 normal;
 	glm::vec4 tangent;
-	glm::vec4 bitangent;
 	glm::vec2 texcoord;
+	glm::vec4 bitangent;
+	
 };
 class Mesh
 {

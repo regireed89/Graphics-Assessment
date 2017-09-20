@@ -15,5 +15,10 @@ out vec4 vTangent;
 
 void main()
 {
+	vPosition = Position;
+	vColor = Color;
+	vNormal = Normal;
+	vUV = UV;
+	vTangent = Tangent;
 	gl_Position = ProjectionViewModel * Position;
 }

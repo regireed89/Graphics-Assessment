@@ -5,6 +5,6 @@
 int main()
 {
 	Application* app = new LightingApp();
-	app->run("dat light doe", 1200, 800, false);
+	app->run("dat light doe", 800, 600, false);
 
 }

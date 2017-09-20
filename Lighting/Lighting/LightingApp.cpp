@@ -9,7 +9,7 @@ using namespace std;
 
 
 
-LightingApp::LightingApp()
+LightingApp::LightingApp() : m_VAO(0), m_VBO(0), m_IBO(0), m_index_count(0), m_modeMatrix(1)
 {
 	_shader = new Shader();
 	_phongShader = new Shader();
@@ -119,35 +119,33 @@ void LightingApp::generateSphere(unsigned int segments, unsigned int rings,
 
 void LightingApp::startup()
 {
-	_camera->setPosition(vec3(10, 10, 10));
-
-	m_directionalLight.diffuse = vec3(1);
+	_camera->setLookAt(vec3(10, 0, 10), vec3(5, 0, 5), vec3(0, 1, 0));
+	m_directionalLight.diffuse = vec3(0,1,0);
 	m_directionalLight.specular = vec3(1);
-	m_ambientLight = vec3(0.25f);
+	m_ambientLight = vec3(0,0.25f,0);
 
 	m_material.diffuse = vec3(1);
 	m_material.ambient = vec3(1);
 	m_material.specular = vec3(1);
-	m_material.specularPower = 64;
-
-	generateSphere(20, 20, m_VAO, m_VBO, m_IBO, m_index_count);
+	m_material.specularPower = 30;
+	glClearColor(1.f, 1.f, 1.f, 0.f);
+	generateSphere(100, 100, m_VAO, m_VBO, m_IBO, m_index_count);
 	m_modeMatrix = glm::scale(vec3(5));
-
-	_shader->load("vsSource.vert", GL_VERTEX_SHADER);
-	_shader->load("fsSource.frag", GL_FRAGMENT_SHADER);
-	_shader->attach();
-	_shader->unbind();
 
 	_phongShader->load("phong.vert", GL_VERTEX_SHADER);
 	_phongShader->load("phong.frag", GL_FRAGMENT_SHADER);
 	_phongShader->attach();
-	_phongShader->unbind();
+	
 
 	
 }
 
 void LightingApp::update(float deltaTime)
 {
+
+	runTime += deltaTime;
+	m_directionalLight.direction = normalize(vec3(sinf(runTime / 2.f), 0, cosf(runTime / 2.f)));
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		glm::vec3 npos = glm::vec3(_camera->getWorldTransform()[3] -= _camera->getWorldTransform()[2]);
@@ -214,31 +212,19 @@ void LightingApp::shutdown()
 
 void LightingApp::draw()
 {
-	glClearColor(1.f, 1.f, 1.f, 0.f);
-	glEnable(GL_DEPTH_TEST);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	_shader->bind();
+
 	_phongShader->bind();
 
-	mat4 view = glm::lookAt(glm::vec3(10, 0, 10), glm::vec3(0), glm::vec3(0, 1, 0));
-	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
-	mat4 mvp = projection * view * glm::scale(vec3(2, 2, 2));
-
-	mat4 normalMatrix = glm::inverse(m_modeMatrix);
-	mat4 pvm = mvp * m_modeMatrix;
+	mat4 pvm = _camera->getProjectionView() * m_modeMatrix;
 
 	int matUniform = _phongShader->getUniform("ProjectionViewModel");
 	glUniformMatrix4fv(matUniform, 1, GL_FALSE, &pvm[0][0]);
 
-	matUniform = _phongShader->getUniform("ModelMatrix");
-	glUniformMatrix4fv(matUniform, 1, GL_FALSE, &m_modeMatrix[0][0]);
-
-	matUniform = _phongShader->getUniform("NormalMatrix");
-	glUniformMatrix4fv(matUniform, 1, GL_TRUE, &normalMatrix[0][0]);
-
-	int lightUniform = _phongShader->getUniform("lightDirection");
+	int lightUniform = _phongShader->getUniform("direction");
 	glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
 
 	lightUniform = _phongShader->getUniform("Id");
@@ -250,23 +236,24 @@ void LightingApp::draw()
 	lightUniform = _phongShader->getUniform("Ia");
 	glUniform1fv(lightUniform, 1, &m_ambientLight[0]);
 
-	int materialUniform = _phongShader->getUniform("Ka");
-	glUniform1fv(materialUniform, 1, &m_material.ambient[0]);
+	lightUniform = _phongShader->getUniform("Ka");
+	glUniform1fv(lightUniform, 1, &m_material.ambient[0]);
 
-	materialUniform = _phongShader->getUniform("Kd");
-	glUniform1fv(materialUniform, 1, &m_material.diffuse[0]);
+	lightUniform = _phongShader->getUniform("Kd");
+	glUniform1fv(lightUniform, 1, &m_material.diffuse[0]);
 
-	materialUniform = _phongShader->getUniform("Ks");
-	glUniform1fv(materialUniform, 1, &m_material.specular[0]);
+	lightUniform = _phongShader->getUniform("Ks");
+	glUniform1fv(lightUniform, 1, &m_material.specular[0]);
 
-	materialUniform = _phongShader->getUniform("specularPower");
-	glUniform1fv(materialUniform, 1, &m_material.specularPower);
-
+	lightUniform = _phongShader->getUniform("a");
+	glUniform1fv(lightUniform, 1, &m_material.specularPower);
+	
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, 0);
 
-	_shader->bindUniform("projectionViewWorldMatrix", mvp);
-	_shader->bindUniform("time", glfwGetTime());
+	_phongShader->unbind();
+
+
 	
 
 }

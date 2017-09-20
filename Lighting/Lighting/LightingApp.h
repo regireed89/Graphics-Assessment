@@ -12,6 +12,7 @@ public:
 	virtual ~LightingApp();
 	void generateSphere(unsigned int segments, unsigned int rings, unsigned int & vao, unsigned int & vbo, unsigned int & ibo, unsigned int & indexCount);
 	void startup() override;
+	float runTime;
 	void update(float deltaTime) override;
 	void draw() override;
 	void shutdown() override;
