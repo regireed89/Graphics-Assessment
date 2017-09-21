@@ -125,6 +125,7 @@ void LightingApp::startup()
 	_phongShader->attach();
 
 	_camera->setLookAt(vec3(10, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
+
 	m_directionalLight.diffuse = vec3(1);
 	m_directionalLight.specular = vec3(1);
 	m_ambientLight = vec3(0,0.25f,0);
@@ -132,7 +133,7 @@ void LightingApp::startup()
 	m_material.diffuse = vec3(1);
 	m_material.ambient = vec3(1);
 	m_material.specular = vec3(1);
-	m_material.specularPower = 30;
+	m_material.specularPower = 64;
 
 	generateSphere(50, 50, m_VAO, m_VBO, m_IBO, m_index_count);
 	m_modeMatrix = glm::scale(vec3(5));
@@ -230,25 +231,28 @@ void LightingApp::draw()
 	glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
 
 	lightUniform = _phongShader->getUniform("Id");
-	glUniform1fv(lightUniform, 1, &m_directionalLight.diffuse[0]);
+	glUniform3fv(lightUniform, 1, &m_directionalLight.diffuse[0]);
 
 	lightUniform = _phongShader->getUniform("Is");
-	glUniform1fv(lightUniform, 1, &m_directionalLight.specular[0]);
+	glUniform3fv(lightUniform, 1, &m_directionalLight.specular[0]);
 
 	lightUniform = _phongShader->getUniform("Ia");
-	glUniform1fv(lightUniform, 1, &m_ambientLight[0]);
+	glUniform3fv(lightUniform, 1, &m_ambientLight[0]);
 
 	lightUniform = _phongShader->getUniform("Ka");
-	glUniform1fv(lightUniform, 1, &m_material.ambient[0]);
+	glUniform3fv(lightUniform, 1, &m_material.ambient[0]);
 
 	lightUniform = _phongShader->getUniform("Kd");
-	glUniform1fv(lightUniform, 1, &m_material.diffuse[0]);
+	glUniform3fv(lightUniform, 1, &m_material.diffuse[0]);
 
 	lightUniform = _phongShader->getUniform("Ks");
-	glUniform1fv(lightUniform, 1, &m_material.specular[0]);
+	glUniform3fv(lightUniform, 1, &m_material.specular[0]);
+
+	lightUniform = _phongShader->getUniform("camPos");
+	glUniform3fv(lightUniform, 1, &view[0][0]);
 
 	lightUniform = _phongShader->getUniform("a");
-	glUniform1fv(lightUniform, 1, &m_material.specularPower);
+	glUniform1f(lightUniform, m_material.specularPower);
 	
 
 	glBindVertexArray(m_VAO);
