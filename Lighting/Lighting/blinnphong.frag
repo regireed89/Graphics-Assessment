@@ -24,6 +24,9 @@ in vec4 vTangent;
 
  void main()
  {	
+	vec3 H = normalize(direction + V);
+	float blin = pow(dot(N,H),a);	
+
 	vec3 N = normalize(vNormal).xyz;
 	vec3 P = vPosition.xyz;
 
@@ -39,3 +42,7 @@ in vec4 vTangent;
 	FragColor = vec4(Ambient + Diffuse + Specular ,1);
 
  }
+
+
+
+	

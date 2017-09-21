@@ -13,6 +13,7 @@ LightingApp::LightingApp() : m_VAO(0), m_VBO(0), m_IBO(0), m_index_count(0), m_m
 {
 	_shader = new Shader();
 	_phongShader = new Shader();
+	_blinnphongShader = new Shader();
 	_camera = new Camera();
 }
 
@@ -123,8 +124,10 @@ void LightingApp::startup()
 	_phongShader->load("phong.vert", GL_VERTEX_SHADER);
 	_phongShader->load("phong.frag", GL_FRAGMENT_SHADER);
 	_phongShader->attach();
+	_blinnphongShader->load("blinnphong.frag", GL_FRAGMENT_SHADER);
+	_blinnphongShader->attach();
 
-	_camera->setLookAt(vec3(10, 0, 1), vec3(0, 0, 0), vec3(0, 1, 0));
+	_camera->setLookAt(vec3(10, 10, 10), vec3(0, 0, 0), vec3(0, 1, 0));
 
 	m_directionalLight.diffuse = vec3(1);
 	m_directionalLight.specular = vec3(1);
@@ -133,9 +136,9 @@ void LightingApp::startup()
 	m_material.diffuse = vec3(1);
 	m_material.ambient = vec3(1);
 	m_material.specular = vec3(1);
-	m_material.specularPower = 64;
+	m_material.specularPower = 10;
 
-	generateSphere(50, 50, m_VAO, m_VBO, m_IBO, m_index_count);
+	generateSphere(100, 100, m_VAO, m_VBO, m_IBO, m_index_count);
 	m_modeMatrix = glm::scale(vec3(5));
 
 	
@@ -221,9 +224,12 @@ void LightingApp::draw()
 
 	mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
-	mat4 model = glm::scale(vec3(5));
+	mat4 model = glm::scale(vec3(8));
 	mat4 mvp = projection * view * model;
+
 	_phongShader->bind();	
+	_blinnphongShader->bind();
+
 	int matUniform = _phongShader->getUniform("ProjectionViewModel");
 	glUniformMatrix4fv(matUniform, 1, GL_FALSE, &mvp[0][0]);
 
@@ -254,6 +260,14 @@ void LightingApp::draw()
 	lightUniform = _phongShader->getUniform("a");
 	glUniform1f(lightUniform, m_material.specularPower);
 	
+	lightUniform = _blinnphongShader->getUniform("a");
+	glUniform1f(lightUniform, m_material.specularPower);
+
+	lightUniform = _blinnphongShader->getUniform("V");
+	glUniform3fv(lightUniform, 1, &view[0]);
+
+	lightUniform = _blinnphongShader->getUniform("direction");
+	glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
 
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, 0);

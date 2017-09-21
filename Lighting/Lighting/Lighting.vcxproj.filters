@@ -64,5 +64,8 @@
     <None Include="phong.vert">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="blinnphong.frag">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

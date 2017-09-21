@@ -18,6 +18,7 @@ public:
 	void shutdown() override;
 	Shader* _shader;
 	Shader* _phongShader;
+	Shader* _blinnphongShader;
 	Camera* _camera;
 	unsigned int m_VBO;
 	unsigned int m_VAO;

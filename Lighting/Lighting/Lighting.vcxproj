@@ -143,6 +143,7 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="blinnphong.frag" />
     <None Include="phong.frag" />
     <None Include="phong.vert" />
   </ItemGroup>
