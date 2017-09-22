@@ -227,7 +227,7 @@ void LightingApp::draw()
 	mat4 model = glm::scale(vec3(8));
 	mat4 mvp = projection * view * model;
 
-	_phongShader->bind();	
+	//_phongShader->bind();	
 	_blinnphongShader->bind();
 
 	int matUniform = _phongShader->getUniform("ProjectionViewModel");
@@ -264,7 +264,7 @@ void LightingApp::draw()
 	glUniform1f(lightUniform, m_material.specularPower);
 
 	lightUniform = _blinnphongShader->getUniform("V");
-	glUniform3fv(lightUniform, 1, &view[0]);
+	glUniform3fv(lightUniform, 1, &view[0][0]);
 
 	lightUniform = _blinnphongShader->getUniform("direction");
 	glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
@@ -272,8 +272,8 @@ void LightingApp::draw()
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-	_phongShader->unbind();
-
+	//_phongShader->unbind();
+	_blinnphongShader->unbind();
 
 	
 
