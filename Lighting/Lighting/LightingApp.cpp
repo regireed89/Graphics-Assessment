@@ -121,6 +121,7 @@ void LightingApp::generateSphere(unsigned int segments, unsigned int rings,
 void LightingApp::startup()
 {
 	glClearColor(1.f, 1.f, 1.f, 0.f);
+	glEnable(GL_DEPTH_TEST);
 	_phongShader->load("phong.vert", GL_VERTEX_SHADER);
 	_phongShader->load("phong.frag", GL_FRAGMENT_SHADER);
 	_phongShader->attach();
@@ -131,10 +132,10 @@ void LightingApp::startup()
 
 	m_directionalLight.diffuse = vec3(1);
 	m_directionalLight.specular = vec3(1);
-	m_ambientLight = vec3(0,0.25f,0);
+	m_ambientLight = vec3(1);
 
 	m_material.diffuse = vec3(1);
-	m_material.ambient = vec3(1);
+	m_material.ambient = vec3(0);
 	m_material.specular = vec3(1);
 	m_material.specularPower = 10;
 
@@ -220,20 +221,22 @@ void LightingApp::draw()
 {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 	mat4 model = glm::scale(vec3(8));
 	mat4 mvp = projection * view * model;
 
-	//_phongShader->bind();	
-	_blinnphongShader->bind();
+	_phongShader->bind();	
+	//_blinnphongShader->bind();
+
+	int lightUniform;
 
 	int matUniform = _phongShader->getUniform("ProjectionViewModel");
 	glUniformMatrix4fv(matUniform, 1, GL_FALSE, &mvp[0][0]);
 
-	int lightUniform = _phongShader->getUniform("direction");
+	lightUniform = _phongShader->getUniform("direction");
 	glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
 
 	lightUniform = _phongShader->getUniform("Id");
@@ -259,21 +262,46 @@ void LightingApp::draw()
 
 	lightUniform = _phongShader->getUniform("a");
 	glUniform1f(lightUniform, m_material.specularPower);
-	
-	lightUniform = _blinnphongShader->getUniform("a");
-	glUniform1f(lightUniform, m_material.specularPower);
 
-	lightUniform = _blinnphongShader->getUniform("V");
+	lightUniform = _phongShader->getUniform("V");
 	glUniform3fv(lightUniform, 1, &view[0][0]);
 
-	lightUniform = _blinnphongShader->getUniform("direction");
-	glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
+
+	//lightUniform = _blinnphongShader->getUniform("Id");
+	//glUniform3fv(lightUniform, 1, &m_directionalLight.diffuse[0]);
+
+	//lightUniform = _blinnphongShader->getUniform("Is");
+	//glUniform3fv(lightUniform, 1, &m_directionalLight.specular[0]);
+
+	//lightUniform = _blinnphongShader->getUniform("Ia");
+	//glUniform3fv(lightUniform, 1, &m_ambientLight[0]);
+
+	//lightUniform = _blinnphongShader->getUniform("Ka");
+	//glUniform3fv(lightUniform, 1, &m_material.ambient[0]);
+
+	//lightUniform = _blinnphongShader->getUniform("Kd");
+	//glUniform3fv(lightUniform, 1, &m_material.diffuse[0]);
+
+	//lightUniform = _blinnphongShader->getUniform("Ks");
+	//glUniform3fv(lightUniform, 1, &m_material.specular[0]);
+
+	//lightUniform = _blinnphongShader->getUniform("camPos");
+	//glUniform3fv(lightUniform, 1, &view[0][0]);
+
+	//lightUniform = _blinnphongShader->getUniform("a");
+	//glUniform1f(lightUniform, m_material.specularPower);
+
+	//lightUniform = _blinnphongShader->getUniform("V");
+	//glUniform3fv(lightUniform, 1, &view[0][0]);
+
+	//lightUniform = _blinnphongShader->getUniform("direction");
+	//glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
 
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-	//_phongShader->unbind();
-	_blinnphongShader->unbind();
+	_phongShader->unbind();
+	//_blinnphongShader->unbind();
 
 	
 

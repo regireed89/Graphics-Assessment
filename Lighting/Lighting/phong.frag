@@ -13,6 +13,7 @@ uniform vec3 Kd;
 uniform vec3 Ks; 
 uniform float a;
 uniform vec3 camPos;
+uniform vec3 V;
 
 in vec4 vNormal;
 in vec4 vPosition;
@@ -20,19 +21,20 @@ in vec4 vColor;
 in vec2 vUV;
 in vec4 vTangent;
  out vec4 FragColor;
- uniform vec3 L;
+ vec3 L;
 
  void main()
  {	
-	vec3 N = normalize(vNormal).xyz;
+	vec3 N = normalize(vNormal.xyz);
 	vec3 P = vPosition.xyz;
+	L = normalize(direction);
 
 	vec3 Ambient = Ka * Ia;
-	float Ndl = max(0.0f,dot(direction, N));
+	float Ndl = max(0.0f,dot(L, N));
 	vec3 Diffuse = Kd * Id * Ndl;
 
-	vec3 R = reflect(direction, N);
-	vec3 E = normalize(camPos - P);
+	vec3 R = reflect(L, N);
+	vec3 E = normalize(camPos -P);
 
 	float specTerm = pow(max(0.0f, dot(R, E)), a);
 	vec3 Specular = Ks * Is * specTerm;
