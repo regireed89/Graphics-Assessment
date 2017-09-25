@@ -131,11 +131,11 @@ void LightingApp::startup()
 	_camera->setLookAt(vec3(10, 10, 10), vec3(0, 0, 0), vec3(0, 1, 0));
 
 	m_directionalLight.diffuse = vec3(1);
-	m_directionalLight.specular = vec3(1);
-	m_ambientLight = vec3(1);
+	m_directionalLight.specular = vec3(1,0,0);
+	m_ambientLight = vec3(0,0.25,0);
 
 	m_material.diffuse = vec3(1);
-	m_material.ambient = vec3(0);
+	m_material.ambient = vec3(1);
 	m_material.specular = vec3(1);
 	m_material.specularPower = 10;
 
