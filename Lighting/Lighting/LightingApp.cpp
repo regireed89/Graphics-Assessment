@@ -267,36 +267,6 @@ void LightingApp::draw()
 	glUniform3fv(lightUniform, 1, &view[0][0]);
 
 
-	//lightUniform = _blinnphongShader->getUniform("Id");
-	//glUniform3fv(lightUniform, 1, &m_directionalLight.diffuse[0]);
-
-	//lightUniform = _blinnphongShader->getUniform("Is");
-	//glUniform3fv(lightUniform, 1, &m_directionalLight.specular[0]);
-
-	//lightUniform = _blinnphongShader->getUniform("Ia");
-	//glUniform3fv(lightUniform, 1, &m_ambientLight[0]);
-
-	//lightUniform = _blinnphongShader->getUniform("Ka");
-	//glUniform3fv(lightUniform, 1, &m_material.ambient[0]);
-
-	//lightUniform = _blinnphongShader->getUniform("Kd");
-	//glUniform3fv(lightUniform, 1, &m_material.diffuse[0]);
-
-	//lightUniform = _blinnphongShader->getUniform("Ks");
-	//glUniform3fv(lightUniform, 1, &m_material.specular[0]);
-
-	//lightUniform = _blinnphongShader->getUniform("camPos");
-	//glUniform3fv(lightUniform, 1, &view[0][0]);
-
-	//lightUniform = _blinnphongShader->getUniform("a");
-	//glUniform1f(lightUniform, m_material.specularPower);
-
-	//lightUniform = _blinnphongShader->getUniform("V");
-	//glUniform3fv(lightUniform, 1, &view[0][0]);
-
-	//lightUniform = _blinnphongShader->getUniform("direction");
-	//glUniform3fv(lightUniform, 1, &m_directionalLight.direction[0]);
-
 	glBindVertexArray(m_VAO);
 	glDrawElements(GL_TRIANGLES, m_index_count, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
