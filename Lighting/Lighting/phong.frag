@@ -41,6 +41,6 @@ in vec4 vTangent;
 
 	float specTerm = pow(max(0.0f, dot(R, E)), a);
 	vec3 Specular = Ks * Is * specTerm;
-	FragColor = vec4(Ambient+Diffuse, 1);
+	FragColor = vec4(Ambient + Diffuse + Specular, 1);
 
  }
