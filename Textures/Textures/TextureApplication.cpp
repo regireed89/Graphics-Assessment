@@ -19,17 +19,20 @@ TextureApplication::~TextureApplication()
 {
 }
 
-void TextureApplication::generatePlane(int rows, int cols)
+void TextureApplication::generatePlane(unsigned int rows, unsigned int cols)
 {
-	
+	std::vector<Vertex> vert;
+	std::vector<unsigned int> indices;
 	for (int i = 0; i < cols; i++)
 	{
-
 		for (int j = 0; j < rows; j++)
 		{
-			Vertex v = {vec4(j,i,0,0), vec4(0,0,0,1), }
+			Vertex v = { vec4(j,i,0,0), vec4(0,0,0,1),vec4(0),vec4(0),vec4(0),vec4(0) };
+			vert.push_back(v);
 		}
+		indices = {}
 	}
+	_plane->initialize(vert, )
 	
 }
 
@@ -76,5 +79,5 @@ void TextureApplication::draw()
 
 	_plane->Draw(GL_TRIANGLES);
 
-	glUseProgram(0);
+	
 }
