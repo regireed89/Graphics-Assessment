@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "LightingApp.h"
+#include <GLM\glm.hpp>
 
 struct Vertex
 {

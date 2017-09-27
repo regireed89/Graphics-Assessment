@@ -27,7 +27,7 @@
     <ClInclude Include="Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureApp.h">
+    <ClInclude Include="TextureApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,7 +47,7 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextureApp.cpp">
+    <ClCompile Include="TextureApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
