@@ -19,7 +19,7 @@ TextureApplication::~TextureApplication()
 {
 }
 
-void TextureApplication::generatePlane(unsigned int rows, unsigned int cols)
+void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 {
 	std::vector<Vertex> vert;
 	std::vector<unsigned int> indices;
@@ -27,13 +27,12 @@ void TextureApplication::generatePlane(unsigned int rows, unsigned int cols)
 	{
 		for (int j = 0; j < rows; j++)
 		{
-			Vertex v = { vec4(j,i,0,0), vec4(0,0,0,1),vec4(0),vec4(0),vec4(0),vec4(0) };
+			Vertex v = { vec4(j,i,0,0), vec4(0,0,0,1),vec4(0),vec4(0),vec2(0),vec4(0) };
 			vert.push_back(v);
 		}
-		indices = {}
 	}
-	_plane->initialize(vert, )
-	
+	_plane->initialize(vert, indices);
+	_plane->Create_Buffers();
 }
 
 void TextureApplication::startup()
@@ -49,7 +48,7 @@ void TextureApplication::startup()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	generatePlane();
+	
 }
 
 void TextureApplication::update(float)

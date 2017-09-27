@@ -9,7 +9,7 @@ public:
 	TextureApplication();
 	virtual ~TextureApplication();
 
-	void generatePlane(unsigned int, unsigned int);
+	void generateGrid(unsigned int, unsigned int);
 
 	// Inherited via Application
 	virtual void startup() override;

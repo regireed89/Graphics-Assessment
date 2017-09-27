@@ -51,4 +51,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="texture.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="texture.vert">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
