@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "Camera.h"
 class TextureApplication :
 	public Application
 {
@@ -17,8 +18,10 @@ public:
 	virtual void shutdown() override;
 	virtual void draw() override;
 	unsigned int _texture;
+	float runtime;
 	Shader* _shader;
 	Shader* _textureshader;
 	Mesh* _plane;
+	Camera* _camera;
 };
 

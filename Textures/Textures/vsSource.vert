@@ -5,6 +5,7 @@ layout(location=1) in vec4 color;
 out vec4 vColor; 
 uniform mat4 projectionViewWorldMatrix;
 uniform float time;
+
 void main() 
 { 
 	vColor = color;

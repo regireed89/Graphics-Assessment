@@ -13,6 +13,7 @@ TextureApplication::TextureApplication()
 	_shader = new Shader();
 	_textureshader = new Shader();
 	_plane = new Mesh();
+	_camera = new Camera();
 }
 
 
@@ -28,7 +29,15 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 	{
 		for (unsigned int c = 0; c < cols; ++c)
 		{
-			
+			Vertex verts = {
+				vec4(float(c), 0, float(r), 1),
+				vec4(sin(r), cos(c), 0, 1),
+				vec4(0, 1, 0, 0),
+				vec4(0),
+				vec2((float(c) / float(cols),float(r) / float(rows),
+				vec4(0)))
+			};
+			aoVertices[r * cols + c] = verts;
 		}
 	}
 
@@ -77,7 +86,7 @@ void TextureApplication::startup()
 	_textureshader->attach();
 	_textureshader->unbind();
 	int texWidth, texHeight, texFormat;
-	unsigned char* image = stbi_load("../texture/crate.png", &texWidth, &texHeight, &texFormat, STBI_default);
+	unsigned char* image = stbi_load("texture/crate.png", &texWidth, &texHeight, &texFormat, STBI_default);
 
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
@@ -86,11 +95,32 @@ void TextureApplication::startup()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	generateGrid(10, 10);
-
 }
 
-void TextureApplication::update(float)
+void TextureApplication::update(float deltaTime)
 {
+	runtime += deltaTime;
+	//controls keybord movement of camera
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		glm::vec3 npos = glm::vec3(_camera->getWorldTransform()[3] -= _camera->getWorldTransform()[2]);
+		_camera->setPosition(npos);
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		glm::vec3 nneg = glm::vec3(_camera->getWorldTransform()[3] += _camera->getWorldTransform()[2]);
+		_camera->setPosition(nneg);
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		glm::vec3 npos = glm::vec3(_camera->getWorldTransform()[3] -= _camera->getWorldTransform()[0]);
+		_camera->setPosition(npos);
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		glm::vec3 nneg = glm::vec3(_camera->getWorldTransform()[3] += _camera->getWorldTransform()[0]);
+		_camera->setPosition(nneg);
+	}
 }
 
 void TextureApplication::shutdown()
@@ -99,23 +129,26 @@ void TextureApplication::shutdown()
 
 void TextureApplication::draw()
 {
+
 	glClearColor(1.f, 1.f, 1.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
-
-	glPolygonMode(GL_FRONT, GL_FILL);
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glLineWidth(2.0f);
-
 	_shader->bind();
-	glm::mat4 view = glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0), glm::vec3(0, 1, 0));
+	_textureshader->bind();
+	glm::mat4 view = glm::lookAt(glm::vec3(15, 15, 20), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
-	mat4 mvp = projection * view * glm::scale(vec3(3, 3, 3)) * glm::translate(vec3(0, 0, -3));
+	mat4 mvp = projection * view;
 
 	_shader->bindUniform("projectionViewWorldMatrix", mvp);
 	_shader->bindUniform("time", glfwGetTime());
-
+	
+	int sample = _textureshader->getUniform("tex");
+	glUniform1i(sample, 0);
+		
 	_plane->Draw(GL_TRIANGLES);
 
 	glUseProgram(0);
+
 }
