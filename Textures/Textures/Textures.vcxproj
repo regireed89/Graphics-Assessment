@@ -132,8 +132,10 @@
     <ClCompile Include="TextureApplication.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="fsSource.frag" />
     <None Include="texture.frag" />
     <None Include="texture.vert" />
+    <None Include="vsSource.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

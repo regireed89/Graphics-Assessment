@@ -4,5 +4,5 @@
 int main()
 {
 	Application* app = new TextureApplication();
-	app->run("dem textures", 800, 600, false);
+	app->run("dem textures", 1200, 800, false);
 }

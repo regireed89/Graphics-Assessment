@@ -18,6 +18,7 @@ public:
 	virtual void draw() override;
 	unsigned int _texture;
 	Shader* _shader;
+	Shader* _textureshader;
 	Mesh* _plane;
 };
 
