@@ -31,6 +31,29 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 			vert.push_back(v);
 		}
 	}
+	unsigned int index = 0;
+
+	for (unsigned i = 0; i < (cols + 1); ++i) {
+
+		for (unsigned j = 0; j < rows; ++j) {
+
+			indices[index++] = i * (rows + 1) + j;
+
+			indices[index++] = (i + 1) * (rows + 1) + j;
+
+			indices[index++] = i * (rows + 1) + (j + 1);
+
+
+
+			indices[index++] = (i + 1) * (rows + 1) + (j + 1);
+
+			indices[index++] = i * (rows + 1) + (j + 1);
+
+			indices[index++] = (i + 1) * (rows + 1) + j;
+
+		}
+
+	}
 	_plane->initialize(vert, indices);
 	_plane->Create_Buffers();
 }
