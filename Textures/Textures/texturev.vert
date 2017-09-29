@@ -14,8 +14,6 @@ out vec4 vNormal;
 out vec4 vTangent;
 out vec2 vUV;
 
-
-
 void main()
 {
 	vPosition = Position;

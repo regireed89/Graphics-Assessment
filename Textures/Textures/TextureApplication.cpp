@@ -30,10 +30,10 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 		{
 			Vertex verts = {
 				vec4(float(c), 0, float(r), 1),
-				vec4(sin(r), cos(c), 0, 1),
+				vec4(0, 0, 0, 1),
 				vec4(0, 1, 0, 0),
 				vec4(0),
-				vec2((float(c) / float(cols),float(r) / float(rows),
+				vec2((float(c) / float(cols-1),float(r) / float(rows-1),
 				vec4(0)))
 			};
 			aoVertices[r * cols + c] = verts;
@@ -68,7 +68,6 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 
 	_plane->initialize(verts, indices);
 	_plane->Create_Buffers();
-
 }
 
 
