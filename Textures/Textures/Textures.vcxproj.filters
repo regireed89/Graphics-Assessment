@@ -58,16 +58,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="texture.frag">
+    <None Include="texturef.frag">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="texture.vert">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="fsSource.frag">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="vsSource.vert">
+    <None Include="texturev.vert">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

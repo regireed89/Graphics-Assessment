@@ -10,7 +10,6 @@ using namespace glm;
 
 TextureApplication::TextureApplication()
 {
-	_shader = new Shader();
 	_textureshader = new Shader();
 	_plane = new Mesh();
 	_camera = new Camera();
@@ -75,14 +74,8 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 
 void TextureApplication::startup()
 {
-
-	_shader->load("vsSource.vert", GL_VERTEX_SHADER);
-	_shader->load("fsSource.frag", GL_FRAGMENT_SHADER);
-	_shader->attach();
-	_shader->unbind();
-
-	_textureshader->load("texture.frag", GL_FRAGMENT_SHADER);
-	_textureshader->load("texture.vert", GL_VERTEX_SHADER);
+	_textureshader->load("texturev.vert", GL_VERTEX_SHADER);
+	_textureshader->load("texturef.frag", GL_FRAGMENT_SHADER);
 	_textureshader->attach();
 	_textureshader->unbind();
 	int texWidth, texHeight, texFormat;
@@ -90,7 +83,7 @@ void TextureApplication::startup()
 
 	glGenTextures(1, &_texture);
 	glBindTexture(GL_TEXTURE_2D, _texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_FLOAT, image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -133,22 +126,23 @@ void TextureApplication::draw()
 	glClearColor(1.f, 1.f, 1.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
 	
+	glPolygonMode(GL_FRONT, GL_FILL);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	_shader->bind();
+	
 	_textureshader->bind();
 	glm::mat4 view = glm::lookAt(glm::vec3(15, 15, 20), glm::vec3(0), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 	mat4 mvp = projection * view;
 
-	_shader->bindUniform("projectionViewWorldMatrix", mvp);
-	_shader->bindUniform("time", glfwGetTime());
+	_textureshader->bindUniform("projectionViewWorldMatrix", mvp);
+	_textureshader->bindUniform("time", glfwGetTime());
 	
 	int sample = _textureshader->getUniform("tex");
 	glUniform1i(sample, 0);
 		
 	_plane->Draw(GL_TRIANGLES);
 
-	glUseProgram(0);
 
+	
 }
