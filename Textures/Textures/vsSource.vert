@@ -9,7 +9,6 @@ uniform float time;
 void main() 
 { 
 	vColor = color;
-	vec4 displ = vec4(cos(time), sin(time), sin(time)/cos(time), 1);
-	vec4 newpos = position;// + displ;
+	vec4 newpos = position;
 	gl_Position = projectionViewWorldMatrix * newpos; 
 }
