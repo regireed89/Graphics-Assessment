@@ -30,11 +30,9 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 		{
 			Vertex verts = {
 				vec4(float(c), 0, float(r), 1),
-				vec4(0, 0, 0, 1),
+				vec4(sin(r), cos(c), 0, 1),
 				vec4(0, 1, 0, 0),
-				vec4(0),
-				vec2((float(c) / float(cols-1),float(r) / float(rows-1),
-				vec4(0)))
+				vec2(float(c) / float(cols-1),float(r) / float(rows-1))
 			};
 			aoVertices[r * cols + c] = verts;
 		}
@@ -76,15 +74,20 @@ void TextureApplication::startup()
 	_textureshader->load("texturev.vert", GL_VERTEX_SHADER);
 	_textureshader->load("texturef.frag", GL_FRAGMENT_SHADER);
 	_textureshader->attach();
-	_textureshader->unbind();
+	
 	int texWidth, texHeight, texFormat;
 	unsigned char* image = stbi_load("texture/crate.png", &texWidth, &texHeight, &texFormat, STBI_default);
 
 	glGenTextures(1, &_texture);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	stbi_image_free(image);
 
 	generateGrid(10, 10);
 }
@@ -125,7 +128,7 @@ void TextureApplication::draw()
 	glClearColor(1.f, 1.f, 1.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
 	
-	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	
@@ -137,11 +140,14 @@ void TextureApplication::draw()
 	_textureshader->bindUniform("projectionViewWorldMatrix", mvp);
 	_textureshader->bindUniform("time", glfwGetTime());
 	
+
+
+
 	int sample = _textureshader->getUniform("tex");
 	glUniform1i(sample, 0);
 		
 	_plane->Draw(GL_TRIANGLES);
-
+	_textureshader->unbind();
 
 	
 }
