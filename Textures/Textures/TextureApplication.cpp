@@ -29,10 +29,10 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 		for (unsigned int c = 0; c < cols; ++c)
 		{
 			Vertex verts = {
-				vec4(float(c), 0, float(r), 1),
-				vec4(sin(r), cos(c), 0, 1),
+				vec4(float(c), 0, float(r), 1),//vertex position
+				vec4(0, 0, 0, 1),
 				vec4(0, 1, 0, 0),
-				vec2(float(c) / float(cols-1),float(r) / float(rows-1))
+				vec2(float(c) / float(cols-1),float(r) / float(rows-1))//UV mapping to grid for each vertex
 			};
 			aoVertices[r * cols + c] = verts;
 		}
@@ -76,18 +76,17 @@ void TextureApplication::startup()
 	_textureshader->attach();
 	
 	int texWidth, texHeight, texFormat;
+	//loads image in formation
 	unsigned char* image = stbi_load("texture/crate.png", &texWidth, &texHeight, &texFormat, STBI_default);
 
-	glGenTextures(1, &_texture);
+	glGenTextures(1, &_texture);//generates texture
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _texture);
+	glBindTexture(GL_TEXTURE_2D, _texture);//binds texture as a 2d texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	stbi_image_free(image);
 
 	generateGrid(10, 10);
 }
@@ -140,8 +139,6 @@ void TextureApplication::draw()
 	_textureshader->bindUniform("projectionViewWorldMatrix", mvp);
 	_textureshader->bindUniform("time", glfwGetTime());
 	
-
-
 
 	int sample = _textureshader->getUniform("tex");
 	glUniform1i(sample, 0);
