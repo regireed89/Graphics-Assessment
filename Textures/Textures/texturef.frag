@@ -12,5 +12,6 @@ uniform sampler2D tex;
 
 void main()
 {
-	outColor = texture(tex, vUV);
+	outColor = texture(tex, vUV).bbrr;
+	outColor.a = 1;
 }

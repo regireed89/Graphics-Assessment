@@ -11,7 +11,6 @@ public:
 	virtual ~TextureApplication();
 
 	void generateGrid(unsigned int, unsigned int);
-
 	// Inherited via Application
 	virtual void startup() override;
 	virtual void update(float) override;

@@ -69,6 +69,8 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 }
 
 
+
+
 void TextureApplication::startup()
 {
 	_textureshader->load("texturev.vert", GL_VERTEX_SHADER);
@@ -79,16 +81,41 @@ void TextureApplication::startup()
 	//loads image in formation
 	unsigned char* image = stbi_load("texture/crate.png", &texWidth, &texHeight, &texFormat, STBI_default);
 
+	int dims = 64;
+	float* perlinData = new float[dims * dims];
+	float scale = (1.0f / dims) * 3;
+	int octaves = 6;
+	for (int x = 0; x < dims; ++x)
+	{
+		for (int y = 0; y < dims; ++y)
+		{
+			float amplitude = 1.f;
+			float persistence = 0.3f;
+			perlinData[y * dims + x] = 0;
+			for (int o = 0; o < octaves; ++o)
+			{
+				float freq = powf(2, (float)o);
+				float perlinSample = glm::perlin(vec2((float)x, (float)y) * scale * freq) * 0.5f + 0.5f;
+				perlinData[y * dims + x] += perlinSample * amplitude;
+				amplitude *= persistence;
+			}
+			
+		}
+	}
+
 	glGenTextures(1, &_texture);//generates texture
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _texture);//binds texture as a 2d texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 64, 64, 0, GL_RED, GL_FLOAT, perlinData);
+
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 
-	generateGrid(10, 10);
+	generateGrid(64, 64);
 }
 
 void TextureApplication::update(float deltaTime)
@@ -124,7 +151,7 @@ void TextureApplication::shutdown()
 void TextureApplication::draw()
 {
 
-	glClearColor(1.f, 1.f, 1.f, 0.f);
+	glClearColor(0.f, 1.f, 0.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
 	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -132,15 +159,18 @@ void TextureApplication::draw()
 
 	
 	_textureshader->bind();
-	glm::mat4 view = glm::lookAt(glm::vec3(15, 15, 20), glm::vec3(0), glm::vec3(0, 1, 0));
+	glm::mat4 view = glm::lookAt(glm::vec3(70, 70, 70), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
 	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 	mat4 mvp = projection * view;
-
+	
 	_textureshader->bindUniform("projectionViewWorldMatrix", mvp);
 	_textureshader->bindUniform("time", glfwGetTime());
 	
 
 	int sample = _textureshader->getUniform("tex");
+	glUniform1i(sample, 0);
+
+	sample = _textureshader->getUniform("perlinTexture");
 	glUniform1i(sample, 0);
 		
 	_plane->Draw(GL_TRIANGLES);
