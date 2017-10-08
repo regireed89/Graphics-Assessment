@@ -16,7 +16,7 @@ public:
 	float dotGridGradient(int ix, int iy, float x, float y);
 	float regiNoise(float x, float y);
 	unsigned int getRandom(unsigned int seed0, unsigned int seed1);
-	double regiNoise2(int x);
+	double regiNoise2(int x, int y);
 	// Inherited via Application
 	virtual void startup() override;
 	virtual void update(float) override;

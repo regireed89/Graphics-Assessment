@@ -30,7 +30,7 @@ void TextureApplication::generateGrid(unsigned int rows, unsigned int cols)
 				vec4(float(c), 0, float(r), 1),//vertex position
 				vec4(0, 0, 0, 1),
 				vec4(0, 1, 0, 0),
-				vec2(float(c) / float(cols-1),float(r) / float(rows-1))//UV mapping to grid for each vertex
+				vec2(float(c) / float(cols - 1),float(r) / float(rows - 1))//UV mapping to grid for each vertex
 			};
 			aoVertices[r * cols + c] = verts;
 		}
@@ -73,7 +73,7 @@ void TextureApplication::perlinNoise()
 	float scale = (1.0f / dims) * 3;
 	int octaves = 6;
 	for (int x = 0; x < dims; ++x)
-	{ 
+	{
 		for (int y = 0; y < dims; ++y)
 		{
 			float amplitude = 1.f;
@@ -81,8 +81,8 @@ void TextureApplication::perlinNoise()
 			perlinData[y * dims + x] = 0;
 			for (int o = 0; o < octaves; ++o)
 			{
-				float freq = powf(2, (float)o); 
-				float perlinSample = regiNoise((float)x * scale * freq, (float)y) * 0.5f + 0.5f;
+				float freq = powf(2, (float)o);
+				float perlinSample = regiNoise2((float)x * scale * freq, (float)y* scale * freq) * 0.5f + 0.5f;
 				perlinData[y * dims + x] += perlinSample * amplitude;
 				amplitude *= persistence;
 			}
@@ -97,7 +97,7 @@ void TextureApplication::perlinNoise()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 // Function to linearly interpolate between a0 and a1
@@ -107,47 +107,6 @@ float TextureApplication::lerp(float a0, float a1, float w)
 	return (1.0 - w)* a0 + w * a1;
 }
 
-// Computes the dot product of the distance and gradient vectors.
-float TextureApplication::dotGridGradient(int ix, int iy, float x, float y)
-{
-	// Precomputed (or otherwise) gradient vectors at each grid node
-	float Gradient[55][55][2];
-
-	// Compute the distance vector
-	float dx = x - (float)ix;
-	float dy = y - (float)iy;
-
-	// Compute the dot-product
-	return (dx * Gradient[iy][ix][0] + dy * Gradient[iy][ix][1]);
-}
-
-// Compute Perlin noise at coordinates x, y
-float TextureApplication::regiNoise(float x, float y)
-{
-	//grid coordinates
-	int x0 = x;
-	int x1 = x0 + 1;
-	int y0 = y;
-	int y1 = y0 + 1;
-
-	// Determine interpolation weights
-	// Could also use higher order polynomial/s-curve here
-	float sx = x - (float)x0;
-	float sy = y - (float)y0;
-
-	// Interpolate between grid point gradients
-	float n0, n1, ix0, ix1, value;
-	n0 = dotGridGradient(x0, y0, x, y);
-	n1 = dotGridGradient(x1, y0, x, y);
-	ix0 = lerp(n0, n1, sx);
-	n0 = dotGridGradient(x0, y1, x, y);
-	n1 - dotGridGradient(x1, y1, x, y);
-	ix1 = lerp(n0, n1, sx);
-	value = lerp(ix0, ix1, sy);
-	
-	return value;
-}
-
 unsigned int TextureApplication::getRandom(unsigned int seed0, unsigned int seed1)
 {
 	seed1 = 36969 * (seed1 & 65535) + (seed1 >> 16);
@@ -155,10 +114,17 @@ unsigned int TextureApplication::getRandom(unsigned int seed0, unsigned int seed
 	return (seed1 << 16) + seed0;
 }
 
-double TextureApplication::regiNoise2(int x)
+double TextureApplication::regiNoise2(int x, int y)
 {
-	x = pow(x << 13, x);
-	return(1.0 - ((x *(x * x * 15731 + 789221) + 1376312589) & 0x7ffffff) / 1073741824.0);
+	vec2 botL, botR, topL, topR, center;
+
+	botL = vec2(x, y);
+	botR = vec2(x + 1, y);
+	topL = vec2(x, y + 1);
+	topR = vec2(x + 1, y + 1);
+	center = (botL + botR + topL + topR) / 4;
+	
+	return glm::lerp(center.x, center.y, .5f);;
 }
 
 void TextureApplication::startup()
@@ -166,7 +132,7 @@ void TextureApplication::startup()
 	_textureshader->load("texturev.vert", GL_VERTEX_SHADER);
 	_textureshader->load("texturef.frag", GL_FRAGMENT_SHADER);
 	_textureshader->attach();
-	
+
 	perlinNoise();
 
 	//int texWidth, texHeight, texFormat;
@@ -182,7 +148,7 @@ void TextureApplication::startup()
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	
+
 	generateGrid(64, 64);
 }
 
@@ -219,30 +185,30 @@ void TextureApplication::shutdown()
 void TextureApplication::draw()
 {
 
-	glClearColor(0.f, 0.f, 1.f, 0.f);
+	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
-	
+
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	
+
 	_textureshader->bind();
-	glm::mat4 view = glm::lookAt(glm::vec3(100, 100, -100), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
-	mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
-	mat4 mvp = projection * view;
+	 _camera->setLookAt(glm::vec3(100, 150, -100), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
+	 
 	
-	_textureshader->bindUniform("projectionViewWorldMatrix", mvp);
+
+	_textureshader->bindUniform("projectionViewWorldMatrix", _camera->getProjectionView());
 	_textureshader->bindUniform("time", glfwGetTime());
-	
+
 
 	int sample = _textureshader->getUniform("tex");
 	glUniform1i(sample, 0);
 
 	sample = _textureshader->getUniform("perlinTexture");
 	glUniform1i(sample, 0);
-		
+
 	_plane->Draw(GL_TRIANGLES);
 	_textureshader->unbind();
 
-	
+
 }
