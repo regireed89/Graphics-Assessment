@@ -25,6 +25,6 @@ void main()
 
 
 	vec4 newpos = vPosition;
-	newpos.y += texture(perlinTexture, UV).r * 21;
+	newpos.y += texture(perlinTexture, UV).r * 5;
 	gl_Position = projectionViewWorldMatrix * newpos; 	
 }
