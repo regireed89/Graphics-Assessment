@@ -123,8 +123,9 @@ double TextureApplication::regiNoise2(int x, int y)
 	topL = vec2(x, y + 1);
 	topR = vec2(x + 1, y + 1);
 	center = (botL + botR + topL + topR) / 4;
-	
-	return glm::lerp(center.x, center.y, .5f);;
+	float cx = glm::floor(center.x);
+	float cy = glm::floor(center.y);
+	return glm::lerp(cx, cy, .5f);;
 }
 
 void TextureApplication::startup()
@@ -193,7 +194,8 @@ void TextureApplication::draw()
 
 
 	_textureshader->bind();
-	 _camera->setLookAt(glm::vec3(100, 150, -100), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
+	 glm::mat4 view = glm::lookAt(glm::vec3(100, 100,-100), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
+	 mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 	 
 	
 
