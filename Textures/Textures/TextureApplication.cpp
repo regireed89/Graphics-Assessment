@@ -111,7 +111,8 @@ unsigned int TextureApplication::getRandom(unsigned int seed0, unsigned int seed
 {
 	seed1 = 36969 * (seed1 & 65535) + (seed1 >> 16);
 	seed0 = 18000 * (seed0 & 65535) + (seed0 >> 16);
-	return (seed1 << 16) + seed0;
+	int v = (seed1 << 16) + seed0;
+	return v;
 }
 
 double TextureApplication::regiNoise2(int x, int y)
@@ -134,6 +135,9 @@ void TextureApplication::startup()
 	_textureshader->load("texturef.frag", GL_FRAGMENT_SHADER);
 	_textureshader->attach();
 
+	_camera->setLookAt(glm::vec3(100, 100, -100), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
+	_camera->setPerspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
+
 	perlinNoise();
 
 	//int texWidth, texHeight, texFormat;
@@ -151,6 +155,7 @@ void TextureApplication::startup()
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	generateGrid(64, 64);
+	
 }
 
 void TextureApplication::update(float deltaTime)
@@ -189,19 +194,14 @@ void TextureApplication::draw()
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	_textureshader->bind();
-	 glm::mat4 view = glm::lookAt(glm::vec3(100, 100,-100), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
-	 mat4 projection = glm::perspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
-	 
 	
 
 	_textureshader->bindUniform("projectionViewWorldMatrix", _camera->getProjectionView());
 	_textureshader->bindUniform("time", glfwGetTime());
-
 
 	int sample = _textureshader->getUniform("tex");
 	glUniform1i(sample, 0);
