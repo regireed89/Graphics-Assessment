@@ -71,7 +71,7 @@ void TextureApplication::perlinNoise()
 	int dims = 64;
 	float* perlinData = new float[dims * dims];
 	float scale = (1.0f / dims) * 3;
-	int octaves = 6;
+	int octaves = 12;
 	for (int x = 0; x < dims; ++x)
 	{
 		for (int y = 0; y < dims; ++y)
@@ -81,7 +81,7 @@ void TextureApplication::perlinNoise()
 			perlinData[y * dims + x] = 0;
 			for (int o = 0; o < octaves; ++o)
 			{
-				float freq = powf(2, (float)o);
+				float freq = powf(-3, (float)o);
 				float perlinSample = regiNoise2((float)x * scale * freq, (float)y* scale * freq) * 0.5f + 0.5f;
 				perlinData[y * dims + x] += perlinSample * amplitude;
 				amplitude *= persistence;
@@ -135,7 +135,7 @@ void TextureApplication::startup()
 	_textureshader->load("texturef.frag", GL_FRAGMENT_SHADER);
 	_textureshader->attach();
 
-	_camera->setLookAt(glm::vec3(100, 100, -100), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
+	_camera->setLookAt(glm::vec3(60, 80, -60), glm::vec3(32, 0, 32), glm::vec3(0, 1, 0));
 	_camera->setPerspective(quarter_pi<float>(), 16 / 9.f, 0.1f, 1000.f);
 
 	perlinNoise();
@@ -194,7 +194,7 @@ void TextureApplication::draw()
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glEnable(GL_DEPTH_TEST);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_textureshader->bind();
