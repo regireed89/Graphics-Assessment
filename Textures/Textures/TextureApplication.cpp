@@ -124,6 +124,7 @@ double TextureApplication::regiNoise2(int x, int y)
 	topL = vec2(x, y + 1);
 	topR = vec2(x + 1, y + 1);
 	center = (botL + botR + topL + topR) / 4;
+	center.y -= 1;
 	float cx = glm::floor(center.x);
 	float cy = glm::floor(center.y);
 	return glm::lerp(cx, cy, .5f);;
